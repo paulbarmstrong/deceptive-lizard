@@ -1,7 +1,9 @@
 import { MouseEvent, useState } from "react"
-import { BACKGROUND_SHADE_T1, TOPICS, MENU_WIDTH, TOPIC_HEIGHT, TOPIC_WIDTH } from "../utilities/Constants"
+import { BACKGROUND_SHADE_T1, TOPICS, MENU_WIDTH, TOPIC_HEIGHT, TOPIC_WIDTH, BACKGROUND_SHADE_T0 } from "../utilities/Constants"
 import { DynamicWebappConfig } from "common"
 import { http } from "../utilities/Http"
+import { ChatPanel } from "./ChatPanel"
+import { TopicsPanel } from "./TopicsPanel"
 
 interface Props {
 	config: DynamicWebappConfig
@@ -9,21 +11,12 @@ interface Props {
 
 export function App(props: Props) {
 	const [selectedTopic, setSelectedTopic] = useState<string | undefined>(undefined)
-	return <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 20, paddingTop: 20}}>
+	return <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingTop: 10}}>
 		<div style={{fontSize: "xxx-large"}}>Deceptive Lizard</div>
-		<div style={{
-			display: "grid",
-			width: `calc(${MENU_WIDTH} + 40px)`,
-			gridTemplateColumns: `repeat(auto-fit, minmax(${TOPIC_WIDTH}, 1fr))`,
-			gap: 20
-		}}>
-			{TOPICS.map(topic => <div key={topic} style={{
-				height: TOPIC_HEIGHT, padding: 20, backgroundColor: BACKGROUND_SHADE_T1, fontSize: "x-large",
-				display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center", borderRadius: 4
-			}}>{topic}</div>)}
-		</div>
-		<div style={{fontSize: "x-large", backgroundColor: BACKGROUND_SHADE_T1, padding: 20, borderRadius: 4, width: MENU_WIDTH,
-			height: TOPIC_HEIGHT, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center"}}>
+		<ChatPanel events={[{eventId: "22222", type: "chat-message", user: "Paul", text: "hello", timestamp: "2025-07-10T10:00:00Z"}]}/>
+		<TopicsPanel/>
+		<div style={{fontSize: "x-large", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, width: `calc((${MENU_WIDTH}) - 40px)`,
+			height: TOPIC_HEIGHT, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", padding: 20}}>
 			{
 				selectedTopic !== undefined ? (
 					<span>The selected topic is <b>{selectedTopic}</b>.</span>
