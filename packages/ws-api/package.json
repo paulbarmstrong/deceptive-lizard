@@ -1,0 +1,24 @@
+{
+	"name": "ws-api",
+	"version": "1.0.0",
+	"main": "src/index.ts",
+	"devDependencies": {
+		"@eslint/js": "^9.5.0",
+		"@types/aws-lambda": "^8.10.115",
+		"@types/lodash": "^4.14.194",
+		"eslint": "^9.5.0",
+		"globals": "^15.6.0",
+		"typescript-eslint": "^7.13.1"
+	},
+	"dependencies": {
+		"@aws-sdk/client-apigatewaymanagementapi": "^3.341.0",
+		"common": "*",
+		"lodash": "^4.17.21",
+		"optimus-ddb-client": "^2.0.1",
+		"zod": "^3.24.1",
+		"ulidx": "^2.3.0"
+	},
+	"scripts": {
+		"lint": "npx eslint src"
+	}
+}

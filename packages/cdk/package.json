@@ -26,7 +26,8 @@
 		"@paulbarmstrong/cdk-static-website-from-asset": "^0.1.10-alpha",
 		"common": "*",
 		"constructs": "^10.3.0",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"dotenv": "^16.5.0"
 	},
 	"directories": {
 		"lib": "lib"

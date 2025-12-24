@@ -4,6 +4,14 @@ export const dynamicWebappConfigZod = z.strictObject({
 	httpApiEndpoint: z.string()
 })
 
+export const deceptiveLizardEventZod = z.strictObject({
+	eventId: z.string(),
+	type: z.literal("chat-message"),
+	user: z.string(),
+	text: z.string(),
+	timestamp: z.string()
+})
+
 export function zodValidate<T extends z.ZodTypeAny>(params: {
 	schema: T,
 	data: any,
