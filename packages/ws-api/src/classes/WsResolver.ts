@@ -1,6 +1,7 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
 import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda"
-import { Json, WsApiEvent } from "common"
+import { Json } from "common"
+import { ClientError, WsApiEvent } from "src/utilities/Types"
 
 export class WsResolver {
 	apiGatewayManagementApiClient: ApiGatewayManagementApiClient
@@ -16,7 +17,7 @@ export class WsResolver {
 		return async (apiGwEvent: APIGatewayEvent) => {
 			const body: any = (() => {
 				try {
-					JSON.parse(apiGwEvent.body!)
+					return JSON.parse(apiGwEvent.body!)
 				} catch (error) {
 					return undefined
 				}
@@ -65,14 +66,5 @@ export class WsResolver {
 			}
 			return { statusCode: 200, body: "success" }
 		}
-	}
-}
-
-export class ClientError extends Error {
-	name = "ClientError"
-	statusCode: number
-	constructor(message: string, statusCode: number = 400) {
-		super(message)
-		this.statusCode = statusCode
 	}
 }

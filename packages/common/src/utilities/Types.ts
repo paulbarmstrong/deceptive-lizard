@@ -11,10 +11,6 @@ export type DynamicWebappConfig = z.infer<typeof dynamicWebappConfigZod>
 
 export type DeceptiveLizardEvent = z.infer<typeof deceptiveLizardEventZod>
 
-export type WsApiEvent = {
-	requestId: string,
-	routeKey: string,
-	connectionId: string,
-	body: Record<string, any>
+export type WebSocketRes = {
+	event: DeceptiveLizardEvent
 }
-

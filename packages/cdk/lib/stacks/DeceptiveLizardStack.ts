@@ -99,6 +99,10 @@ export class DeceptiveLizardStack extends cdk.Stack {
 			},
 			entry: "../ws-api/src/index.ts",
 		})
+		wsApiFunction.addToRolePolicy(new iam.PolicyStatement({
+			actions: ["execute-api:ManageConnections"],
+			resources: [`arn:aws:execute-api:${this.region}:${this.account}:${wsApi.apiId}/*`]
+		}))
 
 		const wsApiCert = (hostedZone !== undefined) ? (
 			new acm.Certificate(this, "WsApiCert", {
@@ -158,13 +162,15 @@ export class DeceptiveLizardStack extends cdk.Stack {
 		})
 		
 		const httpApiEndpoint: string = hostedZone !== undefined ? `https://api.${DECEPTIVE_LIZARD_DOMAIN}` : httpApi.apiEndpoint
+		const wsApiEndpoint: string = hostedZone !== undefined ? `wss://ws.${DECEPTIVE_LIZARD_DOMAIN}` : wsApi.apiEndpoint
 
 		const website = new StaticWebsite(this, "Website", {
 			asset: websiteAsset,
 			domains: hostedZone !== undefined ? [{domainName: DECEPTIVE_LIZARD_DOMAIN!, hostedZone}] : []
 		})
 		const dynamicWebappConfig: DynamicWebappConfig = {
-			httpApiEndpoint
+			httpApiEndpoint,
+			wsApiEndpoint
 		}
 		website.addObject({
 			key: "config.json",
@@ -173,6 +179,10 @@ export class DeceptiveLizardStack extends cdk.Stack {
 
 		new cdk.CfnOutput(this, "HttpApiEndpoint", {
 			value: httpApiEndpoint
+		})
+
+		new cdk.CfnOutput(this, "WsApiEndpoint", {
+			value: wsApiEndpoint
 		})
 
 		new cdk.CfnOutput(this, "WebsiteUrl", {

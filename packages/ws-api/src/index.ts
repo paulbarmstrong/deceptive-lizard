@@ -1,7 +1,8 @@
 import update from "./handlers/update"
 import disconnect from "src/handlers/disconnect"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { ClientError, WsResolver } from "./utilities/Ws"
+import { WsResolver } from "./classes/WsResolver"
+import { ClientError } from "./utilities/Types"
 
 const wsResolver = new WsResolver({
 	wsApiEndpoint: process.env.WEB_SOCKET_API_ENDPOINT!

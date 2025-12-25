@@ -1,7 +1,8 @@
 import * as z from "zod"
 
 export const dynamicWebappConfigZod = z.strictObject({
-	httpApiEndpoint: z.string()
+	httpApiEndpoint: z.string(),
+	wsApiEndpoint: z.string()
 })
 
 export const deceptiveLizardEventZod = z.strictObject({
