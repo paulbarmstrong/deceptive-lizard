@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import { DeceptiveLizardEvent, Lobby, Player, WsUpdateRequestData } from "common"
 import useInterval from "../../hooks/useInterval"
 import { getTimeElapsedString } from "../../utilities/Misc"
-import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH } from "../../utilities/Constants"
+import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, CHAT_HEIGHT } from "../../utilities/Constants"
 import { useRefState } from "../../hooks/useRefState"
 import { useOnKeyDown } from "../../hooks/useOnKeyDown"
 import { Hovertip } from "../Hovertip"
@@ -56,9 +56,9 @@ export function ChatPanel(props: Props) {
 		}
 	}, [textDraft, isSubmittingTopicHint])
 
-	return <div style={{display: "flex", flexDirection: "column", alignItems: "stretch", width: MENU_WIDTH}}>
+	return <div style={{display: "flex", flexDirection: "column", alignItems: "stretch"}}>
 		<div ref={resourceEventContainerRef} style={{display: "flex", flexDirection: "column", alignItems: "stretch", borderStyle: "solid", 
-			borderRadius: 4, borderBottomRightRadius: 0, borderBottomLeftRadius: 0, borderColor: BACKGROUND_SHADE_T1, gap: 3, padding: 3, height: 120, 
+			borderRadius: 4, borderBottomRightRadius: 0, borderBottomLeftRadius: 0, borderColor: BACKGROUND_SHADE_T1, gap: 3, padding: 3, height: CHAT_HEIGHT, 
 			overflowY: "scroll"}}>
 			{
 				props.events.map(event => <div key={event.eventId} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>

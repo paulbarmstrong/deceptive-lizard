@@ -3,6 +3,7 @@ export const BACKGROUND_SHADE_T1: string = "#2b3438"
 export const MENU_WIDTH: string = "max(50vw, min(500px, 100%))"
 export const TOPIC_WIDTH: string = "200px"
 export const TOPIC_HEIGHT: string = "40px"
+export const CHAT_HEIGHT: string = "150px"
 export const TOPICS = [
 	"George Washington",
 	"Abraham Lincoln",
