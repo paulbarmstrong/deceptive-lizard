@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react"
 import { DeceptiveLizardEvent, Lobby, Player, WsUpdateRequestData } from "common"
-import useInterval from "../hooks/useInterval"
-import { getTimeElapsedString } from "../utilities/Misc"
-import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH } from "../utilities/Constants"
-import { useRefState } from "../hooks/useRefState"
-import { useOnKeyDown } from "../hooks/useOnKeyDown"
-import { Hovertip } from "./Hovertip"
+import useInterval from "../../hooks/useInterval"
+import { getTimeElapsedString } from "../../utilities/Misc"
+import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH } from "../../utilities/Constants"
+import { useRefState } from "../../hooks/useRefState"
+import { useOnKeyDown } from "../../hooks/useOnKeyDown"
+import { Hovertip } from "../Hovertip"
 
 interface Props {
 	lobby: Lobby,
