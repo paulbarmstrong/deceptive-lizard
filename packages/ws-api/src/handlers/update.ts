@@ -1,7 +1,7 @@
-import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
+import { ApiGatewayManagementApiClient, PostToConnectionCommand} from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { Json, wsUpdateRequestDataZod, zodValidate } from "common"
+import { Json, Player, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
 import { lobbiesTable, sendWsResponse } from "src/utilities/Misc"
 
@@ -24,7 +24,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		itemNotFoundErrorOverride: e => new ClientError("Not found")
 	})
 
-	let player = lobby.players.find(player => player.connectionId === event.connectionId)
+	let player: Player | undefined = lobby.players.find(player => player.connectionId === event.connectionId)
 
 	if (player === undefined) {
 		if (body.data.playerName === undefined) {
@@ -32,7 +32,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		}
 		player = {
 			connectionId: event.connectionId,
-			name: body.data.playerName
+			name: body.data.playerName,
+			isDeceptiveLizard: false
 		}
 		lobby.players.push(player)
 	}
@@ -62,6 +63,6 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 
 	await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
 
-	return undefined
+	return {connectionId: event.connectionId}
 }
 

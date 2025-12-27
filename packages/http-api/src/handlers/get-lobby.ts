@@ -1,5 +1,5 @@
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { lobbiesTable } from "../utilities/Misc"
+import { lobbiesTable, stripLobby } from "../utilities/Misc"
 import { ClientError, HttpApiEvent } from "../utilities/Http"
 import { lobbyIdZod, zodValidate } from "common"
 import { z } from "zod"
@@ -15,6 +15,5 @@ export async function getLobby(event: HttpApiEvent, optimus: OptimusDdbClient) {
 		key: {id: body.id},
 		itemNotFoundErrorOverride: e => new ClientError("Not found")
 	})
-	lobby.selectedTopicIndex = undefined
-	return {lobby}
+	return {lobby: stripLobby(lobby)}
 }

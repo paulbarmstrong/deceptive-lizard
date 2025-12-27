@@ -15,9 +15,11 @@ export function LobbiesPage(props: Props) {
 	const lobbies = useRefState<Array<Lobby> | undefined>(undefined)
 
 	async function refreshLobbies() {
-		await withError(async () => {
-			lobbies.current = ((await http(`${props.config.httpApiEndpoint}/list-lobbies`, {method: "POST"})) as any).lobbies
-		})
+		if (!document.hidden) {
+			await withError(async () => {
+				lobbies.current = ((await http(`${props.config.httpApiEndpoint}/list-lobbies`, {method: "POST"})) as any).lobbies
+			})
+		}
 	}
 
 	async function createLobby() {

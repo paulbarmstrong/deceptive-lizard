@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react"
 import { useRefState } from "../hooks/useRefState"
-import { useScrollY } from "./useScrollY"
+import { useScrollY } from "../hooks/useScrollY"
 
 interface Props {
 	inverted: boolean,

@@ -7,15 +7,18 @@ export const dynamicWebappConfigZod = z.strictObject({
 
 export const lobbyIdZod = z.number().int().min(0).max(9999)
 
+export const playerZod = z.strictObject({
+	connectionId: z.string(),
+	name: z.string(),
+	isDeceptiveLizard: z.optional(z.boolean()),
+	topicHint: z.optional(z.string()),
+	votePlayerIndex: z.optional(z.number().int().min(0))
+})
+
 export const lobbyZod = z.strictObject({
 	id: lobbyIdZod,
 	turnPlayerIndex: z.number().int().min(0),
-	players: z.array(z.strictObject({
-		connectionId: z.string(),
-		name: z.string(),
-		topicHint: z.optional(z.string()),
-		votePlayerIndex: z.optional(z.number().int().min(0))
-	})),
+	players: z.array(playerZod),
 	category: z.optional(z.string()),
 	topics: z.array(z.string()),
 	selectedTopicIndex: z.optional(z.number().int().min(0)),

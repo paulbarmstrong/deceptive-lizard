@@ -4,6 +4,7 @@ import { useLobby } from "../../hooks/useLobby"
 import { ChatPanel } from "../ChatPanel"
 import { TopicsPanel } from "../TopicsPanel"
 import { useError } from "../../hooks/useError"
+import { LoadingSpinner } from "../LoadingSpinner"
 
 interface Props {
 	config: DynamicWebappConfig,
@@ -12,7 +13,7 @@ interface Props {
 
 export function LobbyPage(props: Props) {
 	const [error, setError, withError] = useError()
-	const [lobby, events, sendWsUpdate] = useLobby(props.config.wsApiEndpoint, "Paul", props.originalLobby, setError)
+	const [lobby, player, events, sendWsUpdate] = useLobby(props.config.wsApiEndpoint, "Paul", props.originalLobby, setError)
 
 	return <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingTop: 10}}>
 		<div style={{fontSize: "xxx-large"}}>Deceptive Lizard</div>
@@ -21,10 +22,14 @@ export function LobbyPage(props: Props) {
 		<div style={{fontSize: "x-large", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, width: `calc((${MENU_WIDTH}) - 40px)`,
 			height: TOPIC_HEIGHT, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", padding: 20}}>
 			{
-				lobby.selectedTopicIndex !== undefined ? (
-					<span>The selected topic is <b>{lobby.topics[lobby.selectedTopicIndex]}</b>.</span>
+				player?.isDeceptiveLizard !== undefined ? (
+					player?.isDeceptiveLizard ? (
+						<span><b>You are the deceptive lizard.</b></span>
+					) : (
+						<span>The selected topic is <b>{lobby.topics[lobby.selectedTopicIndex!]}</b>.</span>
+					)
 				) : (
-					<span><b>You are the deceptive lizard.</b></span>
+					<LoadingSpinner/>
 				)
 			}
 		</div>
