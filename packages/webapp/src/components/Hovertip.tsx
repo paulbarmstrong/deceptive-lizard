@@ -6,14 +6,16 @@ interface Props {
 	inverted: boolean,
 	estimatedWidth: number,
 	pointerEvents: boolean,
-	textColor: string
+	textColor: string,
+	enabledOverride: boolean
 }
 
 const defaultProps = {
 	inverted: false,
 	estimatedWidth: 0,
 	pointerEvents: true,
-	textColor: "white"
+	textColor: "white",
+	enabledOverride: false
 }
 
 const Z_INDEX = 200
@@ -45,7 +47,7 @@ export function Hovertip(props: React.PropsWithChildren<Props>) {
 		setMouseOverParent(false)
 	}
 
-	const enabled = mouseOverParent
+	const enabled = mouseOverParent || props.enabledOverride
 
 	if (parentEl.current != undefined && enabled) {
 		return <HovertipAux parentEl={parentEl.current} inverted={props.inverted} estimatedWidth={props.estimatedWidth} pointerEvents={props.pointerEvents} textColor={props.textColor}>

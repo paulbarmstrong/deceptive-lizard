@@ -1,32 +1,41 @@
 import { useEffect, useRef } from "react"
-import { DeceptiveLizardEvent } from "../utilities/Types"
-import { UpdateQueue } from "common"
+import { DeceptiveLizardEvent, Lobby, Player, WsUpdateRequestData } from "common"
 import useInterval from "../hooks/useInterval"
 import { getTimeElapsedString } from "../utilities/Misc"
 import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH } from "../utilities/Constants"
 import { useRefState } from "../hooks/useRefState"
-import { useConst } from "../hooks/useConst"
 import { useOnKeyDown } from "../hooks/useOnKeyDown"
+import { Hovertip } from "./Hovertip"
 
 interface Props {
-	events: Array<DeceptiveLizardEvent>
+	lobby: Lobby,
+	player: Player | undefined,
+	events: Array<DeceptiveLizardEvent>,
+	sendWsUpdate: (data: WsUpdateRequestData) => void
 }
 
 export function ChatPanel(props: Props) {
 	const textDraft = useRefState<string>("")
 	const resourceEventContainerRef = useRef<HTMLDivElement>(null)
 	const dateRefreshIncr = useRefState<number>(0)
-	const chatMessageUpdateQueue = useConst<UpdateQueue<string>>(() => new UpdateQueue<string>(submitChatMessage, undefined, 200, false, () => undefined, () => undefined))
 	const latestChatMessageTime = useRef<number>(0)
 
-	async function submitChatMessage(text: string): Promise<boolean> {
-		//await addChatMessage
-		return true
-	}
+	const isSubmittingTopicHint: boolean = props.player !== undefined && props.lobby.players
+		.find(x => x.topicHint === undefined)?.connectionId === props.player.connectionId
 
 	function onEnterChatMessage() {
 		if (textDraft.current.length > 0) {
-			chatMessageUpdateQueue.add(textDraft.current)
+			if (isSubmittingTopicHint) {
+				props.sendWsUpdate({
+					lobbyId: props.lobby.id,
+					topicHint: textDraft.current
+				})
+			} else {
+				props.sendWsUpdate({
+					lobbyId: props.lobby.id,
+					chatMessage: textDraft.current
+				})
+			}
 			textDraft.current = ""
 		}
 	}
@@ -45,7 +54,7 @@ export function ChatPanel(props: Props) {
 			event.preventDefault()
 			onEnterChatMessage()
 		}
-	}, [textDraft])
+	}, [textDraft, isSubmittingTopicHint])
 
 	return <div style={{display: "flex", flexDirection: "column", alignItems: "stretch", width: MENU_WIDTH}}>
 		<div ref={resourceEventContainerRef} style={{display: "flex", flexDirection: "column", alignItems: "stretch", borderStyle: "solid", 
@@ -67,7 +76,14 @@ export function ChatPanel(props: Props) {
 			<input className="TextChatInput" value={textDraft.current} onChange={e => textDraft.current = e.target.value}
 				style={{paddingLeft: 10, paddingRight: 10, flexGrow: 1, color: "white", fontSize: "large", backgroundColor: BACKGROUND_SHADE_T0, borderStyle: "none"}}
 			/>
-			<span className={`material-symbols-outlined${textDraft.current.length > 0 ? " clickable" : ""}`} onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5}}>send</span>
+			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined}}>send</span>
+			{
+				isSubmittingTopicHint ? (
+					<Hovertip enabledOverride={true}><span style={{fontSize: "large"}}>Submit your topic hint</span></Hovertip>
+				) : (
+					undefined
+				)
+			}
 		</div>
 	</div>
 }

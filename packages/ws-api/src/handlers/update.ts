@@ -24,30 +24,31 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		itemNotFoundErrorOverride: e => new ClientError("Not found")
 	})
 
-	let player: Player | undefined = lobby.players.find(player => player.connectionId === event.connectionId)
+	const existingPlayer: Player | undefined = lobby.players.find(player => player.connectionId === event.connectionId)
 
-	if (player === undefined) {
+	const player: Player = existingPlayer ?? (() => {
 		if (body.data.playerName === undefined) {
 			throw new ClientError("New player must provide playerName")
 		}
-		player = {
+		const newPlayer: Player = {
 			connectionId: event.connectionId,
 			name: body.data.playerName,
 			isDeceptiveLizard: false
 		}
-		lobby.players.push(player)
-	}
+		lobby.players.push(newPlayer)
+		return newPlayer
+	})()
 
-	if (body.data.topicHint) {
+	if (body.data.topicHint !== undefined) {
 		// event
 		player!.topicHint = body.data.topicHint
 	}
 
-	if (body.data.chatMessage) {
+	if (body.data.chatMessage !== undefined) {
 		// event
 	}
 
-	if (body.data.votePlayerIndex) {
+	if (body.data.votePlayerIndex !== undefined) {
 		// event
 		player!.votePlayerIndex = body.data.votePlayerIndex
 		if (lobby.players.find(player => player.votePlayerIndex === undefined) === undefined) {
@@ -63,6 +64,6 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 
 	await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
 
-	return {connectionId: event.connectionId}
+	return (existingPlayer === undefined) ? {connectionId: event.connectionId} : undefined
 }
 
