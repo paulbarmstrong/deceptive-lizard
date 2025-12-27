@@ -1,6 +1,7 @@
-import { BACKGROUND_SHADE_T1, MENU_WIDTH, TOPIC_HEIGHT, TOPIC_WIDTH, TOPICS } from "../utilities/Constants";
+import { Lobby } from "common"
+import { BACKGROUND_SHADE_T1, MENU_WIDTH, TOPIC_HEIGHT, TOPIC_WIDTH, TOPICS } from "../utilities/Constants"
 
-export function TopicsPanel() {
+export function TopicsPanel(props: {lobby: Lobby}) {
 	return <div style={{
 		display: "grid",
 		width: MENU_WIDTH,

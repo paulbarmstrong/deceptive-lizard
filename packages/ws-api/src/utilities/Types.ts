@@ -1,5 +1,3 @@
-
-
 export type WsApiEvent = {
 	requestId: string,
 	routeKey: string,

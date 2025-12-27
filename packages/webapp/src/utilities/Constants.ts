@@ -25,3 +25,4 @@ export const TOPICS = [
 	"John Adams",
 	"James Monroe"
 ]
+export const RED_SHADE_T0: string = "#77525a"

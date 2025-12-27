@@ -38,7 +38,7 @@ export function ChatPanel(props: Props) {
 		}
 	}, [resourceEventContainerRef, props.events])
 
-	useInterval(() => dateRefreshIncr.current += 1, 60000, [])
+	useInterval(() => dateRefreshIncr.current += 1, 60000, false, [])
 
 	useOnKeyDown((event: globalThis.KeyboardEvent) => {
 		if (event.key === "Enter" && !event.shiftKey && document.activeElement && document.activeElement.className === "TextChatInput") {
