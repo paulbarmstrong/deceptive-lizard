@@ -1,6 +1,7 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
-import { Lobby, lobbyZod, WsResponse } from "common"
-import { Table } from "optimus-ddb-client"
+import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, WsResponse } from "common"
+import { OptimusDdbClient, Table } from "optimus-ddb-client"
+import { ulid } from "ulidx"
 
 export const lobbiesTable = new Table({
 	tableName: "DeceptiveLizardLobbies",
@@ -8,6 +9,24 @@ export const lobbiesTable = new Table({
 	partitionKey: "id"
 })
 
+export const gameEventsTable = new Table({
+	tableName: "DeceptiveLizardGameEvents",
+	itemSchema: gameEventZod,
+	partitionKey: "lobbyId",
+	sortKey: "eventId"
+})
+
+export function draftGameEvent(optimus: OptimusDdbClient, data: {lobbyId: number, playerName: string, text?: string, type: GameEventType}) {
+	return optimus.draftItem({
+		table: gameEventsTable,
+		item: {
+			eventId: ulid(),
+			timestamp: DateTime.now.toISOString(),
+			ttl: Math.floor(DateTime.now.plusHours(1).getMillis / 1000),
+			...data
+		}
+	})
+}
 
 export async function sendWsResponse(lobby: Lobby, res: WsResponse, apiGatewayManagementClient: ApiGatewayManagementApiClient) {
 	try {

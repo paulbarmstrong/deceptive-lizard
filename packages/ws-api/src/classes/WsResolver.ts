@@ -35,14 +35,14 @@ export class WsResolver {
 				if (resObject !== undefined) response = JSON.stringify(resObject)
 			} catch (error) {
 				if (error instanceof ClientError) {
-					response = JSON.stringify({ error: {
+					response = JSON.stringify({error: {
 						message: error.message,
 						statusCode: error.statusCode
 					}})
 				} else {
 					console.error(`${apiGwEvent.requestContext.requestId} | Unhandled error: ${(error as Error).stack}`)
 					serverError = true
-					response =  JSON.stringify({ error: {
+					response =  JSON.stringify({error: {
 						message: "Internal Server Error",
 						statusCode: 500
 					}})

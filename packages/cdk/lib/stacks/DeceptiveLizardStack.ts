@@ -37,11 +37,21 @@ export class DeceptiveLizardStack extends cdk.Stack {
 			removalPolicy: cdk.RemovalPolicy.DESTROY
 		})
 
+		const gameEventsTable = new dynamodb.Table(this, "GameEventsTable", {
+			tableName: "DeceptiveLizardGameEvents",
+			billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+			partitionKey: { name: "lobbyId", type: dynamodb.AttributeType.NUMBER },
+			sortKey: { name: "eventId", type: dynamodb.AttributeType.STRING },
+			timeToLiveAttribute: "ttl",
+			removalPolicy: cdk.RemovalPolicy.DESTROY
+		})
+
 		const httpApiFunction = new lambda_nodejs.NodejsFunction(this, "HttpApiFunction", {
 			runtime: lambda.Runtime.NODEJS_24_X,
 			entry: "../http-api/src/index.ts",
 		})
 		lobbiesTable.grantReadWriteData(httpApiFunction)
+		gameEventsTable.grantReadWriteData(httpApiFunction)
 
 		const httpApiCert: acm.Certificate | undefined = hostedZone !== undefined ? (
 			new acm.Certificate(this, "HttpApiCert", {
@@ -109,6 +119,7 @@ export class DeceptiveLizardStack extends cdk.Stack {
 			entry: "../ws-api/src/index.ts",
 		})
 		lobbiesTable.grantReadWriteData(wsApiFunction)
+		gameEventsTable.grantReadWriteData(wsApiFunction)
 		wsApiFunction.addToRolePolicy(new iam.PolicyStatement({
 			actions: ["execute-api:ManageConnections"],
 			resources: [`arn:aws:execute-api:${this.region}:${this.account}:${wsApi.apiId}/*`]

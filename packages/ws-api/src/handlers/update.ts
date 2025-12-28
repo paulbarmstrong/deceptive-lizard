@@ -1,9 +1,10 @@
-import { ApiGatewayManagementApiClient, PostToConnectionCommand} from "@aws-sdk/client-apigatewaymanagementapi"
+import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
 import { Json, Player, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
-import { lobbiesTable, sendWsResponse } from "src/utilities/Misc"
+import { draftGameEvent, lobbiesTable, sendWsResponse } from "src/utilities/Misc"
+import { countBy } from "lodash"
 
 const bodyZod = z.strictObject({
 	action: z.literal("update"),
@@ -17,6 +18,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		schema: bodyZod,
 		errorMapping: e => new ClientError(e.message)
 	})
+
+	const gameEvents = []
 
 	const lobby = await optimus.getItem({
 		table: lobbiesTable,
@@ -36,33 +39,74 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			isDeceptiveLizard: false
 		}
 		lobby.players.push(newPlayer)
+
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "join",
+			playerName: body.data.playerName
+		}))
+		
 		return newPlayer
 	})()
 
 	if (body.data.topicHint !== undefined) {
-		// event
 		player!.topicHint = body.data.topicHint
+
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "topic-hint",
+			playerName: player.name,
+			text: body.data.topicHint
+		}))
 	}
 
 	if (body.data.chatMessage !== undefined) {
-		// event
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "chat",
+			playerName: player.name,
+			text: body.data.chatMessage
+		}))
 	}
 
-	if (body.data.votePlayerIndex !== undefined || body.data.clearVotePlayerIndex) {
-		// event
-		player!.votePlayerIndex = body.data.clearVotePlayerIndex ? undefined : body.data.votePlayerIndex
+	if (body.data.votePlayerIndex !== undefined || body.data.clearVotePlayerIndex === true) {
+		player!.votePlayerIndex = (body.data.clearVotePlayerIndex === true) ? undefined : body.data.votePlayerIndex
+		if (player!.votePlayerIndex !== undefined && (player.votePlayerIndex < 0 || player.votePlayerIndex >= lobby.players.length)) {
+			throw new ClientError("Voted player does not exist")
+		}
+
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "vote",
+			playerName: player.name,
+			text: body.data.votePlayerIndex !== undefined ? lobby.players[body.data.votePlayerIndex].name : undefined
+		}))
+
 		if (lobby.players.find(player => player.votePlayerIndex === undefined) === undefined) {
-			// event
-			lobby.players.forEach(player => {
-				player.topicHint = undefined
-				player.votePlayerIndex = undefined
-			})
+			const voteFreqs = Object.entries(countBy(lobby.players.map(x => x.votePlayerIndex)))
+				.map(pair => ({playerIndex: parseInt(pair[0]), freq: pair[1]})).sort((a,b) => b.freq - a.freq)
+			if (voteFreqs.length === 1 || voteFreqs[0].freq !== voteFreqs[1].freq) {
+				lobby.players.forEach(player => {
+					player.topicHint = undefined
+					player.votePlayerIndex = undefined
+				})
+
+				gameEvents.push(draftGameEvent(optimus, {
+					lobbyId: lobby.id,
+					type: "game-end",
+					playerName: player.name,
+					text: lobby.players[voteFreqs[0].playerIndex].name
+				}))
+			}
 		}
 	}
 
-	await optimus.commitItems({items: [lobby]})
+	await optimus.commitItems({items: [lobby, ...gameEvents]})
 
 	await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
+	for (const gameEvent of gameEvents) {
+		await sendWsResponse(lobby, {gameEvent}, apiGatewayManagementClient)
+	}
 
 	return (existingPlayer === undefined) ? {connectionId: event.connectionId} : undefined
 }

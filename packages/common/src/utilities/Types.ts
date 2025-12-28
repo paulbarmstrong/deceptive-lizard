@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { deceptiveLizardEventZod, dynamicWebappConfigZod, lobbyZod, playerZod, wsUpdateRequestDataZod } from "./Zod"
+import { dynamicWebappConfigZod, gameEventTypeZod, gameEventZod, lobbyZod, playerZod, wsUpdateRequestDataZod } from "./Zod"
 
 export type Json = undefined | null | string | number | boolean | Array<Json> | JsonObject
 
@@ -13,12 +13,14 @@ export type Player = z.infer<typeof playerZod>
 
 export type Lobby = z.infer<typeof lobbyZod>
 
-export type DeceptiveLizardEvent = z.infer<typeof deceptiveLizardEventZod>
+export type GameEventType = z.infer<typeof gameEventTypeZod>
+
+export type GameEvent = z.infer<typeof gameEventZod>
 
 export type WsUpdateRequestData = z.infer<typeof wsUpdateRequestDataZod>
 
 export type WsResponse = {
-	event?: DeceptiveLizardEvent,
+	gameEvent?: GameEvent,
 	lobby?: Lobby,
 	connectionId?: string
 }

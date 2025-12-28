@@ -1,16 +1,17 @@
 import { useEffect, useRef } from "react"
-import { DeceptiveLizardEvent, Lobby, Player, WsUpdateRequestData } from "common"
+import { GameEvent, Lobby, Player, WsUpdateRequestData } from "common"
 import useInterval from "../../hooks/useInterval"
 import { getTimeElapsedString } from "../../utilities/Misc"
 import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, CHAT_HEIGHT } from "../../utilities/Constants"
 import { useRefState } from "../../hooks/useRefState"
 import { useOnKeyDown } from "../../hooks/useOnKeyDown"
 import { Hovertip } from "../Hovertip"
+import { PlayerBadge } from "../PlayerBadge"
 
 interface Props {
 	lobby: Lobby,
 	player: Player | undefined,
-	events: Array<DeceptiveLizardEvent>,
+	gameEvents: Array<GameEvent>,
 	sendWsUpdate: (data: WsUpdateRequestData) => void
 }
 
@@ -41,11 +42,11 @@ export function ChatPanel(props: Props) {
 	}
 	
 	useEffect(() => {
-		if (resourceEventContainerRef.current != null && props.events.length > 0 && new Date(props.events[props.events.length-1].timestamp).getTime() > latestChatMessageTime.current) {
+		if (resourceEventContainerRef.current != null && props.gameEvents.length > 0 && new Date(props.gameEvents[props.gameEvents.length-1].timestamp).getTime() > latestChatMessageTime.current) {
 			resourceEventContainerRef.current.scrollTop = resourceEventContainerRef.current.scrollHeight
-			latestChatMessageTime.current = new Date(props.events[props.events.length-1].timestamp).getTime()
+			latestChatMessageTime.current = new Date(props.gameEvents[props.gameEvents.length-1].timestamp).getTime()
 		}
-	}, [resourceEventContainerRef, props.events])
+	}, [resourceEventContainerRef, props.gameEvents])
 
 	useInterval(() => dateRefreshIncr.current += 1, 60000, false, [])
 
@@ -61,14 +62,28 @@ export function ChatPanel(props: Props) {
 			borderRadius: 4, borderBottomRightRadius: 0, borderBottomLeftRadius: 0, borderColor: BACKGROUND_SHADE_T1, gap: 3, padding: 3, height: CHAT_HEIGHT, 
 			overflowY: "scroll"}}>
 			{
-				props.events.map(event => <div key={event.eventId} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-					{
-						<div style={{display: "flex", alignItems: "center"}}>
-							<div style={{backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 4}}>{event.user}</div>
-							<div>: {event.text}</div>
-						</div>
-					}
-					<div style={{padding: 4, fontSize: "medium"}}>{getTimeText(event.timestamp)}</div>
+				props.gameEvents.map(gameEvent => <div key={gameEvent.eventId} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+					<div style={{display: "flex", alignItems: "center", gap: gameEvent.type === "chat" ? undefined: 4}}>
+						<PlayerBadge playerName={gameEvent.playerName}/>
+						{
+							(() => {
+								if (gameEvent.type === "chat") {
+									return <span>: {gameEvent.text}</span>
+								} else if (gameEvent.type === "join") {
+									return <span>joined</span>
+								} else if (gameEvent.type === "leave") {
+									return <span>left</span>
+								} else if (gameEvent.type === "topic-hint") {
+									return <span>submitted topic hint "{gameEvent.text}"</span>
+								} else if (gameEvent.type === "vote") {
+									return <span>voted for {gameEvent.text}</span>
+								} else if (gameEvent.type === "game-end") {
+									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}</span>
+								}
+							})()
+						}
+					</div>
+					<div style={{padding: 4, fontSize: "medium"}}>{getTimeText(gameEvent.timestamp)}</div>
 				</div>)
 			}
 		</div>
@@ -96,3 +111,22 @@ function getTimeText(timestamp: string): string {
 		return "just now"
 	}
 }
+
+/**
+ * 
+ * (() => {
+								if (gameEvent.type === "chat") {
+									return <span>: {gameEvent.text}</span>
+								} else if (gameEvent.type === "join") {
+									return <span>joined</span>
+								} else if (gameEvent.type === "leave") {
+									return <span>left</span>
+								} else if (gameEvent.type === "topic-hint") {
+									return <div>submitted a topic hint</div>
+								} else if (gameEvent.type === "vote") {
+									return <div>voted<div>
+								} else if (gameEvent.type === "game-end") {
+									return <div>game end<div>
+								}
+							})()
+ */

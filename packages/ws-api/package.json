@@ -8,15 +8,15 @@
 		"@types/lodash": "^4.14.194",
 		"eslint": "^9.5.0",
 		"globals": "^15.6.0",
-		"typescript-eslint": "^7.13.1"
+		"typescript-eslint": "^8.50.1"
 	},
 	"dependencies": {
 		"@aws-sdk/client-apigatewaymanagementapi": "^3.341.0",
 		"common": "*",
 		"lodash": "^4.17.21",
 		"optimus-ddb-client": "^2.0.1",
-		"zod": "^3.24.1",
-		"ulidx": "^2.3.0"
+		"ulidx": "^2.4.1",
+		"zod": "^3.24.1"
 	},
 	"scripts": {
 		"lint": "npx eslint src"

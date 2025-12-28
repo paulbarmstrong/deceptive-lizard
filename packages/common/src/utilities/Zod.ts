@@ -27,12 +27,18 @@ export const lobbyZod = z.strictObject({
 //	.refine(lobby => lobby.turnPlayerIndex < lobby.players.length || lobby.players.length === 0)
 // 	.refine(lobby => lobby.players.map(player => (player.votePlayerIndex ?? 0) < lobby.players.length))
 
-export const deceptiveLizardEventZod = z.strictObject({
-	eventId: z.string(),
-	type: z.literal("chat-message"),
-	user: z.string(),
-	text: z.string(),
-	timestamp: z.string()
+export const gameEventTypeZod = z.union([
+	z.literal("chat"), z.literal("join"), z.literal("leave"), z.literal("topic-hint"), z.literal("vote"), z.literal("game-end")
+])
+
+export const gameEventZod = z.strictObject({
+	lobbyId: lobbyIdZod,
+	eventId: z.string().ulid(),
+	type: gameEventTypeZod,
+	playerName: z.string(),
+	text: z.optional(z.string()),
+	timestamp: z.string(),
+	ttl: z.number().int()
 })
 
 export const wsUpdateRequestDataZod = z.strictObject({

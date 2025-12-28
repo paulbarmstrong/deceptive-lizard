@@ -6,6 +6,7 @@
 		"packages/cdk",
 		"packages/common",
 		"packages/http-api",
-		"packages/webapp"
+		"packages/webapp",
+		"packages/ws-api"
 	]
 }
