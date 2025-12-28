@@ -1,16 +1,20 @@
-import { BACKGROUND_SHADE_T1, MENU_WIDTH, TOPIC_WIDTH } from "../../utilities/Constants"
+import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH, PLAYER_NAME_LOCAL_STORAGE_KEY, TOPIC_WIDTH } from "../../utilities/Constants"
 import { DynamicWebappConfig, Lobby } from "common"
 import { http } from "../../utilities/Http"
 import { useRefState } from "../../hooks/useRefState"
 import useInterval from "../../hooks/useInterval"
 import { useError } from "../../hooks/useError"
 import { LoadingSpinner } from "../LoadingSpinner"
+import { Hovertip } from "../Hovertip"
+import { usePersistentRefState } from "../../hooks/usePersistentRefState"
+import { useEffect } from "react"
 
 interface Props {
 	config: DynamicWebappConfig
 }
 
 export function LobbiesPage(props: Props) {
+	const playerName = usePersistentRefState<string>({defaultValue: "", localStorageKey: PLAYER_NAME_LOCAL_STORAGE_KEY})
 	const [error, setError, withError] = useError()
 	const lobbies = useRefState<Array<Lobby> | undefined>(undefined)
 
@@ -29,31 +33,47 @@ export function LobbiesPage(props: Props) {
 		await refreshLobbies()
 	}
 
-	useInterval(refreshLobbies, 10000, true, [])
+	useInterval(refreshLobbies, 2000, true, [])
 
-	return <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingTop: 10}}>
-		<div style={{fontSize: "xx-large"}}>Deceptive Lizard</div>
-		<div style={{cursor: "pointer", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 20, fontSize: "large", fontWeight: "bold", width: MENU_WIDTH, textAlign: "center"}} onClick={createLobby}>CREATE LOBBY</div>
-		<div style={{width: MENU_WIDTH, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap"}}>
-			{
-				lobbies.current !== undefined ? (
-					lobbies.current.map(lobby => <a key={lobby.id} href={`/lobbies/${lobby.id}`} style={{
-						display: "flex", flexDirection: "column", gap: 10, backgroundColor: BACKGROUND_SHADE_T1,
-						borderRadius: 4, padding: 20, fontSize: "large", width: TOPIC_WIDTH
-					}}>
-						<div style={{fontSize: "x-large", textAlign: "center"}}>{lobby.id}</div>
-						{lobby.players.length > 0 ? (
-							<div style={{display: "flex", flexDirection: "column", gap: 3}}>{
-								lobby.players.map(player => <span key={player.connectionId}>{player.name}</span>)
-							}</div>
-						) : (
-							undefined
-						)}
-					</a>)
-				) : (
-					<LoadingSpinner/>
-				)
-			}
+	return <div style={{display: "flex", justifyContent: "center"}}>
+		<div style={{display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10, paddingTop: 10, width: MENU_WIDTH}}>
+			<div style={{fontSize: "xx-large", textAlign: "center"}}>Deceptive Lizard</div>
+			<div style={{textAlign: "left"}}>Player name:</div>
+			<div style={{borderColor: BACKGROUND_SHADE_T1, borderStyle: "solid", display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left", height: 40}}>
+				<input value={playerName.current} onChange={e => playerName.current = e.target.value}
+					style={{paddingLeft: 10, paddingRight: 10, flexGrow: 1, color: "white", fontSize: "large", backgroundColor: BACKGROUND_SHADE_T0, borderStyle: "none"}}
+				/>
+				{
+					playerName.current.length < 3 ? (
+						<Hovertip enabledOverride={true}>Please add your name</Hovertip>
+					) : (
+						undefined
+					)
+				}
+			</div>
+			<div style={{textAlign: "left"}}>Lobbies:</div>
+			<div style={{cursor: "pointer", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 20, fontSize: "large", fontWeight: "bold", textAlign: "center"}} onClick={createLobby}>CREATE LOBBY</div>
+			<div style={{display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap"}}>
+				{
+					lobbies.current !== undefined ? (
+						lobbies.current.map(lobby => <a key={lobby.id} href={`/lobbies/${lobby.id}`} style={{
+							display: "flex", flexDirection: "column", gap: 10, backgroundColor: BACKGROUND_SHADE_T1,
+							borderRadius: 4, padding: 20, fontSize: "large", width: TOPIC_WIDTH
+						}}>
+							<div style={{fontSize: "x-large", textAlign: "center"}}>{lobby.id}</div>
+							{lobby.players.length > 0 ? (
+								<div style={{display: "flex", flexDirection: "column", gap: 3}}>{
+									lobby.players.map(player => <span key={player.connectionId}>{player.name}</span>)
+								}</div>
+							) : (
+								undefined
+							)}
+						</a>)
+					) : (
+						<LoadingSpinner/>
+					)
+				}
+			</div>
 		</div>
 	</div>
 }

@@ -7,6 +7,8 @@ import { useError } from "../../hooks/useError"
 import { StatusPanel } from "../panels/StatusPanel"
 import { PlayersPanel } from "../panels/PlayersPanel"
 import { PlayerInfoPanel } from "../panels/PlayerInfoPanel"
+import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 interface Props {
 	config: DynamicWebappConfig,
@@ -15,7 +17,7 @@ interface Props {
 
 export function LobbyPage(props: Props) {
 	const [error, setError, withError] = useError()
-	const [lobby, player, events, sendWsUpdate] = useLobby(props.config.wsApiEndpoint, "Paul", props.originalLobby, setError)
+	const [lobby, player, events, sendWsUpdate] = useLobby(props.config.wsApiEndpoint, props.originalLobby, setError)
 
 	return <div style={{display: "flex", justifyContent: "center"}}>
 		<div style={{width: MENU_WIDTH, display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10, paddingTop: 10}}>
