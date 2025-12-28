@@ -4,9 +4,8 @@ import { useLobby } from "../../hooks/useLobby"
 import { ChatPanel } from "../panels/ChatPanel"
 import { TopicsPanel } from "../panels/TopicsPanel"
 import { useError } from "../../hooks/useError"
-import { LoadingSpinner } from "../LoadingSpinner"
 import { StatusPanel } from "../panels/StatusPanel"
-import { VotingPanel } from "../panels/VotingPanel"
+import { PlayersPanel } from "../panels/PlayersPanel"
 import { PlayerInfoPanel } from "../panels/PlayerInfoPanel"
 
 interface Props {
@@ -20,11 +19,11 @@ export function LobbyPage(props: Props) {
 
 	return <div style={{display: "flex", justifyContent: "center"}}>
 		<div style={{width: MENU_WIDTH, display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10, paddingTop: 10}}>
-			<div style={{fontSize: "xx-large", textAlign: "center"}}>Deceptive Lizard</div>
+			<div style={{fontSize: "xx-large", textAlign: "center"}}>Deceptive Lizard: Lobby {lobby.id}</div>
 			<div style={{textAlign: "left"}}>Game status:</div>
 			<StatusPanel lobby={lobby} player={player}/>
-			<div style={{textAlign: "left"}}>Voting:</div>
-			<VotingPanel lobby={lobby} player={player} sendWsUpdate={sendWsUpdate}/>
+			<div style={{textAlign: "left"}}>Players:</div>
+			<PlayersPanel lobby={lobby} player={player} sendWsUpdate={sendWsUpdate}/>
 			<div style={{textAlign: "left"}}>Chat:</div>
 			<ChatPanel lobby={lobby} player={player} events={[{eventId: "22222", type: "chat-message", user: "Paul", text: "hello", timestamp: "2025-07-10T10:00:00Z"}]} sendWsUpdate={sendWsUpdate}/>
 			<div style={{textAlign: "left"}}>Topics:</div>

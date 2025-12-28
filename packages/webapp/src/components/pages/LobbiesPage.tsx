@@ -32,7 +32,7 @@ export function LobbiesPage(props: Props) {
 	useInterval(refreshLobbies, 10000, true, [])
 
 	return <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingTop: 10}}>
-		<div style={{fontSize: "xxx-large"}}>Deceptive Lizard</div>
+		<div style={{fontSize: "xx-large"}}>Deceptive Lizard</div>
 		<div style={{cursor: "pointer", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 20, fontSize: "large", fontWeight: "bold", width: MENU_WIDTH, textAlign: "center"}} onClick={createLobby}>CREATE LOBBY</div>
 		<div style={{width: MENU_WIDTH, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap"}}>
 			{
@@ -41,7 +41,7 @@ export function LobbiesPage(props: Props) {
 						display: "flex", flexDirection: "column", gap: 10, backgroundColor: BACKGROUND_SHADE_T1,
 						borderRadius: 4, padding: 20, fontSize: "large", width: TOPIC_WIDTH
 					}}>
-						<div style={{fontSize: "large", textAlign: "center"}}>{lobby.id}</div>
+						<div style={{fontSize: "x-large", textAlign: "center"}}>{lobby.id}</div>
 						{lobby.players.length > 0 ? (
 							<div style={{display: "flex", flexDirection: "column", gap: 3}}>{
 								lobby.players.map(player => <span key={player.connectionId}>{player.name}</span>)

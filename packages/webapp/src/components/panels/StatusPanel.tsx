@@ -14,7 +14,7 @@ export function StatusPanel(props: {
 			if (playerSubmittingHint !== undefined) return `Waiting for ${props.lobby.players[0].name} to submit a topic hint...`
 			const playersVoting = props.lobby.players.filter(player => player.votePlayerIndex === undefined)
 			if (playersVoting.length > 0) return `Waiting for ${playersVoting.map(x => x.name).join(", ")} to vote...`
-			return "Waiting for tie to be broken"
+			return "Waiting for tie to be broken..."
 		})()}
 	</div>
 }

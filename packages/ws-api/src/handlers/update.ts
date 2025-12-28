@@ -48,9 +48,9 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		// event
 	}
 
-	if (body.data.votePlayerIndex !== undefined) {
+	if (body.data.votePlayerIndex !== undefined || body.data.clearVotePlayerIndex) {
 		// event
-		player!.votePlayerIndex = body.data.votePlayerIndex
+		player!.votePlayerIndex = body.data.clearVotePlayerIndex ? undefined : body.data.votePlayerIndex
 		if (lobby.players.find(player => player.votePlayerIndex === undefined) === undefined) {
 			// event
 			lobby.players.forEach(player => {
