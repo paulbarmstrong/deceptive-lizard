@@ -8,6 +8,7 @@ import { LoadingSpinner } from "../LoadingSpinner"
 import { Hovertip } from "../Hovertip"
 import { usePersistentRefState } from "../../hooks/usePersistentRefState"
 import { useEffect } from "react"
+import { PlayersPanel } from "../panels/PlayersPanel"
 
 interface Props {
 	config: DynamicWebappConfig
@@ -52,28 +53,28 @@ export function LobbiesPage(props: Props) {
 				}
 			</div>
 			<div style={{textAlign: "left"}}>Lobbies:</div>
-			<div style={{cursor: "pointer", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 20, fontSize: "large", fontWeight: "bold", textAlign: "center"}} onClick={createLobby}>CREATE LOBBY</div>
-			<div style={{display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap"}}>
+			<div style={{display: "flex", gap: 10, flexDirection: "column", justifyContent: "stretch", flexWrap: "wrap"}}>
 				{
 					lobbies.current !== undefined ? (
 						lobbies.current.map(lobby => <a key={lobby.id} href={`/lobbies/${lobby.id}`} style={{
-							display: "flex", flexDirection: "column", gap: 10, backgroundColor: BACKGROUND_SHADE_T1,
-							borderRadius: 4, padding: 20, fontSize: "large", width: TOPIC_WIDTH
+							display: "flex", flexDirection: "column", justifyContent: "center", gap: 10, borderColor: BACKGROUND_SHADE_T1, borderStyle: "solid",
+							borderRadius: 4, padding: 10
 						}}>
-							<div style={{fontSize: "x-large", textAlign: "center"}}>{lobby.id}</div>
-							{lobby.players.length > 0 ? (
-								<div style={{display: "flex", flexDirection: "column", gap: 3}}>{
-									lobby.players.map(player => <span key={player.connectionId}>{player.name}</span>)
-								}</div>
-							) : (
-								undefined
-							)}
+							<div style={{fontSize: "x-large", textAlign: "center"}}>Lobby #{lobby.id}</div>
+							{
+								lobby.players.length > 0 ? (
+									<PlayersPanel player={undefined} lobby={lobby} sendWsUpdate={() => undefined}/>
+								) : (
+									undefined
+								)
+							}
 						</a>)
 					) : (
 						<LoadingSpinner/>
 					)
 				}
 			</div>
+			<div style={{cursor: "pointer", backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, padding: 20, fontSize: "large", fontWeight: "bold", textAlign: "center"}} onClick={createLobby}>CREATE NEW LOBBY</div>
 		</div>
 	</div>
 }
