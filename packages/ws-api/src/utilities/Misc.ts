@@ -1,5 +1,5 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
-import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, stripLobbyForDeceptiveLizard, WsResponse } from "common"
+import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, stripLobby, WsResponse } from "common"
 import { OptimusDdbClient, Table } from "optimus-ddb-client"
 import { ulid } from "ulidx"
 
@@ -25,7 +25,11 @@ export function resetRound(lobby: Lobby) {
 	lobby.players.forEach(player => {
 		player.topicHint = undefined
 		player.votePlayerIndex = undefined
+		player.isDeceptiveLizard = undefined
 	})
+	lobby.category = undefined
+	lobby.topics = undefined
+	lobby.selectedTopicIndex = undefined
 }
 
 export function draftGameEvent(optimus: OptimusDdbClient, data: {lobbyId: number, playerName: string, text?: string, type: GameEventType}) {
@@ -45,7 +49,7 @@ export async function sendWsResponse(lobby: Lobby, res: WsResponse, apiGatewayMa
 		await Promise.all(lobby.players.map(async player => {
 			try {
 				if (res.lobby !== undefined && player.isDeceptiveLizard === true) {
-					res.lobby = stripLobbyForDeceptiveLizard(res.lobby)
+					res.lobby = stripLobby(res.lobby, player)
 				}
 				await apiGatewayManagementClient.send(new PostToConnectionCommand({
 					ConnectionId: player.connectionId,

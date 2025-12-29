@@ -21,12 +21,20 @@ export function ChatPanel(props: Props) {
 	const dateRefreshIncr = useRefState<number>(0)
 	const latestChatMessageTime = useRef<number>(0)
 
-	const isSubmittingTopicHint: boolean = props.player !== undefined && props.lobby.players
+	const isChoosingCategory: boolean = props.player !== undefined && props.lobby.category === undefined 
+		&& props.lobby.players.findIndex(x => x.connectionId === props.player!.connectionId) === 0
+
+	const isSubmittingTopicHint: boolean = props.player !== undefined && props.lobby.category !== undefined && props.lobby.players
 		.find(x => x.topicHint === undefined)?.connectionId === props.player.connectionId
 
 	function onEnterChatMessage() {
 		if (textDraft.current.length > 0) {
-			if (isSubmittingTopicHint) {
+			if (isChoosingCategory) {
+				props.sendWsUpdate({
+					lobbyId: props.lobby.id,
+					category: textDraft.current
+				})
+			} else if (isSubmittingTopicHint) {
 				props.sendWsUpdate({
 					lobbyId: props.lobby.id,
 					topicHint: textDraft.current
@@ -55,7 +63,7 @@ export function ChatPanel(props: Props) {
 			event.preventDefault()
 			onEnterChatMessage()
 		}
-	}, [textDraft, isSubmittingTopicHint])
+	}, [textDraft, isChoosingCategory, isSubmittingTopicHint])
 
 	return <div style={{display: "flex", flexDirection: "column", alignItems: "stretch"}}>
 		<div ref={resourceEventContainerRef} style={{display: "flex", flexDirection: "column", alignItems: "stretch", borderStyle: "solid", 
@@ -77,8 +85,10 @@ export function ChatPanel(props: Props) {
 									return <span>submitted topic hint "{gameEvent.text}".</span>
 								} else if (gameEvent.type === "vote") {
 									return <span>set their vote to {gameEvent.text}.</span>
-								} else if (gameEvent.type === "game-end") {
+								} else if (gameEvent.type === "round-end") {
 									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}.</span>
+								} else if (gameEvent.type === "category") {
+									return <span>set the category to "{gameEvent.text}"</span>
 								}
 							})()
 						}
@@ -95,6 +105,13 @@ export function ChatPanel(props: Props) {
 			{
 				isSubmittingTopicHint ? (
 					<Hovertip enabledOverride={true}><span style={{fontSize: "large"}}>Submit your topic hint</span></Hovertip>
+				) : (
+					undefined
+				)
+			}
+			{
+				isChoosingCategory ? (
+					<Hovertip enabledOverride={true}><span style={{fontSize: "large"}}>Submit a category</span></Hovertip>
 				) : (
 					undefined
 				)

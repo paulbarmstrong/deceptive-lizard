@@ -11,7 +11,7 @@ export function StatusPanel(props: {
 			if (props.player === undefined) return "Connecting..."
 			if (props.lobby.category === undefined) return `Waiting for ${props.lobby.players[0].name} to pick a category...`
 			const playerSubmittingHint = props.lobby.players.find(player => player.topicHint === undefined)
-			if (playerSubmittingHint !== undefined) return `Waiting for ${props.lobby.players[0].name} to submit a topic hint...`
+			if (playerSubmittingHint !== undefined) return `Waiting for ${playerSubmittingHint.name} to submit a topic hint...`
 			const playersVoting = props.lobby.players.filter(player => player.votePlayerIndex === undefined)
 			if (playersVoting.length > 0) return `Waiting for ${playersVoting.map(x => x.name).join(", ")} to vote...`
 			return "Waiting for tie to be broken..."

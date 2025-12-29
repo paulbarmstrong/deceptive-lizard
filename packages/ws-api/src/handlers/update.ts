@@ -1,10 +1,11 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { Json, Player, wsUpdateRequestDataZod, zodValidate } from "common"
+import { Json, NUM_TOPICS, Player, topicsArrayZod, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
 import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse, updateLobbyTtl } from "src/utilities/Misc"
 import { countBy } from "lodash"
+import { askNova } from "src/utilities/Nova"
 
 const bodyZod = z.strictObject({
 	action: z.literal("update"),
@@ -49,6 +50,32 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		return newPlayer
 	})()
 
+	if (body.data.category !== undefined) {
+		if (lobby.players.indexOf(player) !== 0) {
+			throw new ClientError("You are not the first player")
+		}
+		if (lobby.category !== undefined) {
+			throw new ClientError("Category was already chosen")
+		}
+		lobby.category = body.data.category
+		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific less-than-four-word subjects within the category "${body.data.category}".
+			If the category is something inappropriate then please don't return anything.
+			Please be sure to capitalize proper nouns.
+			Please output it as a JSON array of strings.
+			Please output only the JSON array, with no backticks and no json label.`)
+		lobby.topics = zodValidate({data: JSON.parse(novaAnswer), schema: topicsArrayZod})
+		lobby.selectedTopicIndex = Math.floor(Math.random() * NUM_TOPICS)
+		const deceptiveLizardPlayerIndex = Math.floor(Math.random() * lobby.players.length)
+		lobby.players.forEach((player, playerIndex) => player.isDeceptiveLizard = playerIndex === deceptiveLizardPlayerIndex)
+
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "category",
+			playerName: player.name,
+			text: body.data.category
+		}))
+	}
+
 	if (body.data.topicHint !== undefined) {
 		player!.topicHint = body.data.topicHint
 
@@ -90,7 +117,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 
 				gameEvents.push(draftGameEvent(optimus, {
 					lobbyId: lobby.id,
-					type: "game-end",
+					type: "round-end",
 					playerName: player.name,
 					text: lobby.players[voteFreqs[0].playerIndex].name
 				}))

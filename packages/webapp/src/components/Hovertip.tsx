@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react"
 import { useRefState } from "../hooks/useRefState"
 import { useScrollY } from "../hooks/useScrollY"
+import { useWindowSize } from "../hooks/useWindowSize"
 
 interface Props {
 	inverted: boolean,
@@ -24,6 +25,7 @@ export function Hovertip(props: React.PropsWithChildren<Props>) {
 	const tooltipEl = useRef<HTMLDivElement>(null)
 	const parentEl = useRefState<HTMLElement | undefined>(undefined)
 	const [mouseOverParent, setMouseOverParent] = useState<boolean>(false)
+	useWindowSize()
 
 	useEffect(() => {
 		const parent = tooltipEl.current?.parentElement

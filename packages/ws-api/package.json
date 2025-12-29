@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-apigatewaymanagementapi": "^3.341.0",
+		"@aws-sdk/client-bedrock-runtime": "^3.958.0",
 		"common": "*",
 		"lodash": "^4.17.21",
 		"optimus-ddb-client": "^2.0.1",

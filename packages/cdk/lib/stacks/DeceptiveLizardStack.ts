@@ -29,6 +29,11 @@ export class DeceptiveLizardStack extends cdk.Stack {
 			undefined
 		)
 
+		const functionProps = {
+			runtime: lambda.Runtime.NODEJS_24_X,
+			timeout: cdk.Duration.seconds(10)
+		}
+
 		const lobbiesTable = new dynamodb.Table(this, "LobbiesTable", {
 			tableName: "DeceptiveLizardLobbies",
 			billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -47,8 +52,8 @@ export class DeceptiveLizardStack extends cdk.Stack {
 		})
 
 		const httpApiFunction = new lambda_nodejs.NodejsFunction(this, "HttpApiFunction", {
-			runtime: lambda.Runtime.NODEJS_24_X,
-			entry: "../http-api/src/index.ts",
+			...functionProps,
+			entry: "../http-api/src/index.ts"
 		})
 		lobbiesTable.grantReadWriteData(httpApiFunction)
 		gameEventsTable.grantReadWriteData(httpApiFunction)
@@ -112,17 +117,21 @@ export class DeceptiveLizardStack extends cdk.Stack {
 		})
 
 		const wsApiFunction = new lambda_nodejs.NodejsFunction(this, "WsApiFunction", {
-			runtime: lambda.Runtime.NODEJS_24_X,
+			...functionProps,
 			environment: {
 				WEB_SOCKET_API_ENDPOINT: wsApi?.apiEndpoint
 			},
-			entry: "../ws-api/src/index.ts",
+			entry: "../ws-api/src/index.ts"
 		})
 		lobbiesTable.grantReadWriteData(wsApiFunction)
 		gameEventsTable.grantReadWriteData(wsApiFunction)
 		wsApiFunction.addToRolePolicy(new iam.PolicyStatement({
 			actions: ["execute-api:ManageConnections"],
 			resources: [`arn:aws:execute-api:${this.region}:${this.account}:${wsApi.apiId}/*`]
+		}))
+		wsApiFunction.addToRolePolicy(new iam.PolicyStatement({
+			actions: ["bedrock:InvokeModel"],
+			resources: ["*"]
 		}))
 
 		const wsApiCert = (hostedZone !== undefined) ? (

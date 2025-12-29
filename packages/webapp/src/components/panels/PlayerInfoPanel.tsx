@@ -13,7 +13,7 @@ export function PlayerInfoPanel(props: {
 				props.player?.isDeceptiveLizard ? (
 					<span><b>You are the deceptive lizard.</b></span>
 				) : (
-					<span>The selected topic is <b>{props.lobby.topics[props.lobby.selectedTopicIndex!]}</b>.</span>
+					<span>The selected topic is <b>{props.lobby.topics![props.lobby.selectedTopicIndex!]}</b>.</span>
 				)
 			) : (
 				<LoadingSpinner/>

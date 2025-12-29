@@ -1,9 +1,15 @@
 import { cloneDeep } from "lodash"
-import { Lobby } from "./Types"
+import { Lobby, Player } from "./Types"
 
-export function stripLobbyForDeceptiveLizard(lobby: Lobby): Lobby {
+export function stripLobby(lobby: Lobby, player: Player | undefined): Lobby {
 	const strippedLobby = cloneDeep(lobby)
-	strippedLobby.selectedTopicIndex = undefined
-	strippedLobby.players.forEach(player => player.isDeceptiveLizard = undefined)
+	if (player?.isDeceptiveLizard !== false) {
+		strippedLobby.selectedTopicIndex = undefined
+	}
+	if (player?.isDeceptiveLizard !== true) {
+		strippedLobby.players.forEach(x => {
+			if (x.connectionId !== player?.connectionId) x.isDeceptiveLizard = undefined
+		})
+	}
 	return strippedLobby
 }

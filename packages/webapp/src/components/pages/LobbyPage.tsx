@@ -1,4 +1,4 @@
-import { BACKGROUND_SHADE_T1, MENU_WIDTH } from "../../utilities/Constants"
+import { MENU_WIDTH } from "../../utilities/Constants"
 import { DynamicWebappConfig, Lobby } from "common"
 import { useLobby } from "../../hooks/useLobby"
 import { ChatPanel } from "../panels/ChatPanel"
@@ -8,7 +8,6 @@ import { StatusPanel } from "../panels/StatusPanel"
 import { PlayersPanel } from "../panels/PlayersPanel"
 import { PlayerInfoPanel } from "../panels/PlayerInfoPanel"
 import { Toast } from "../Toast"
-import { Hovertip } from "../Hovertip"
 
 interface Props {
 	config: DynamicWebappConfig,
@@ -21,7 +20,7 @@ export function LobbyPage(props: Props) {
 
 	return <div style={{display: "flex", justifyContent: "center"}}>
 		<div style={{width: MENU_WIDTH, display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10, paddingTop: 10}}>
-			<div style={{fontSize: "xx-large", textAlign: "center"}}>Deceptive Lizard: Lobby {lobby.id}</div>
+			<div style={{fontSize: "xx-large", textAlign: "center"}}>Deceptive Lizard: Lobby #{lobby.id}</div>
 			{error !== undefined ? <Toast message={error.message} onClose={() => setError(undefined)}/> : undefined}
 			<div style={{textAlign: "left"}}>Game status:</div>
 			<StatusPanel lobby={lobby} player={player}/>
@@ -29,10 +28,18 @@ export function LobbyPage(props: Props) {
 			<PlayersPanel lobby={lobby} player={player} sendWsUpdate={sendWsUpdate}/>
 			<div style={{textAlign: "left"}}>Chat:</div>
 			<ChatPanel lobby={lobby} player={player} gameEvents={gameEvents} sendWsUpdate={sendWsUpdate}/>
-			<div style={{textAlign: "left"}}>Topics:</div>
-			<TopicsPanel lobby={lobby}/>
-			<div style={{textAlign: "left"}}>Player information:</div>
-			<PlayerInfoPanel lobby={lobby} player={player}/>
+			{
+				lobby.topics !== undefined ? (
+					<div style={{display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10}}>
+						<div style={{textAlign: "left"}}>Topics:</div>
+						<TopicsPanel lobby={lobby}/>
+						<div style={{textAlign: "left"}}>Player information:</div>
+						<PlayerInfoPanel lobby={lobby} player={player}/>
+					</div>
+				) : (
+					undefined
+				)
+			}
 		</div>
 	</div>
 }
