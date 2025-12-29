@@ -1,5 +1,5 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
-import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, stripLobby, WsResponse } from "common"
+import { DateTime, GameEvent, GameEventType, gameEventZod, Lobby, lobbyZod, stripLobby, WsResponse } from "common"
 import { OptimusDdbClient, Table } from "optimus-ddb-client"
 import { ulid } from "ulidx"
 
@@ -21,12 +21,20 @@ export function updateLobbyTtl(lobby: Lobby): Lobby {
 	return lobby
 }
 
-export function resetRound(lobby: Lobby) {
+export function resetRound(optimus: OptimusDdbClient, lobby: Lobby, gameEvents: Array<GameEvent>, rotateRoundLeader: boolean = true) {
 	lobby.players.forEach(player => {
 		player.topicHint = undefined
 		player.votePlayerIndex = undefined
 		player.isDeceptiveLizard = undefined
 	})
+	if (rotateRoundLeader) {
+		lobby.players.push(lobby.players.shift()!)
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			playerName: lobby.players[0].name,
+			type: "new-round-leader"
+		}))
+	}
 	lobby.category = undefined
 	lobby.topics = undefined
 	lobby.selectedTopicIndex = undefined

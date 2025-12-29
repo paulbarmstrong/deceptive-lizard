@@ -1,7 +1,7 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { Json, NUM_TOPICS, Player, topicsArrayZod, wsUpdateRequestDataZod, zodValidate } from "common"
+import { GameEvent, Json, NUM_TOPICS, Player, topicsArrayZod, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
 import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse, updateLobbyTtl } from "src/utilities/Misc"
 import { countBy } from "lodash"
@@ -20,7 +20,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		errorMapping: e => new ClientError(e.message)
 	})
 
-	const gameEvents = []
+	const gameEvents: Array<GameEvent> = []
 
 	const lobby = await optimus.getItem({
 		table: lobbiesTable,
@@ -40,21 +40,23 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			isDeceptiveLizard: false
 		}
 		lobby.players.push(newPlayer)
-		resetRound(lobby)
 
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
 			type: "join",
 			playerName: body.data.playerName
 		}))
+
+		resetRound(optimus, lobby, gameEvents)
+
 		return newPlayer
 	})()
 
 	if (body.data.category !== undefined) {
-		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the lead player")
+		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the round leader")
 		if (lobby.category !== undefined) throw new ClientError("Category was already chosen")
 		lobby.category = body.data.category
-		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific less-than-four-word subjects within the category "${body.data.category}".
+		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific subjects within the category "${body.data.category}".
 			If the category is something inappropriate then please don't return anything.
 			Please be sure to capitalize proper nouns.
 			Please output it as a JSON array of strings.
@@ -73,8 +75,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 	}
 
 	if (body.data.resetRound !== undefined) {
-		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the lead player")
-		resetRound(lobby)
+		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the round leader")
+		resetRound(optimus, lobby, gameEvents, false)
 
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
@@ -120,14 +122,13 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			const voteFreqs = Object.entries(countBy(lobby.players.map(x => x.votePlayerIndex)))
 				.map(pair => ({playerIndex: parseInt(pair[0]), freq: pair[1]})).sort((a,b) => b.freq - a.freq)
 			if (voteFreqs.length === 1 || voteFreqs[0].freq !== voteFreqs[1].freq) {
-				resetRound(lobby)
-
 				gameEvents.push(draftGameEvent(optimus, {
 					lobbyId: lobby.id,
 					type: "round-end",
 					playerName: player.name,
 					text: lobby.players[voteFreqs[0].playerIndex].name
 				}))
+				resetRound(optimus, lobby, gameEvents)
 			}
 		}
 	}

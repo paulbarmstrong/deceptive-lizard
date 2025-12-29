@@ -38,6 +38,10 @@ export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setE
 		sendWsUpdate({lobbyId: originalLobby.id, playerName: playerName.current})
 	}
 
+	function onWebSocketClose() {
+		setError(new Error("WebSocket failed"))
+	}
+
 	function onWebSocketMessage(event: MessageEvent) {
 		try {
 			const rawRes = JSON.parse(event.data)
@@ -62,9 +66,13 @@ export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setE
 	useEffect(() => {
 		webSocket.addEventListener("open", onWebSocketOpen)
 		webSocket.addEventListener("message", onWebSocketMessage)
+		webSocket.addEventListener("close", onWebSocketClose)
+		webSocket.addEventListener("error", onWebSocketClose)
 		return () => {
 			webSocket.removeEventListener("open", onWebSocketOpen)
 			webSocket.removeEventListener("message", onWebSocketMessage)
+			webSocket.removeEventListener("close", onWebSocketClose)
+			webSocket.removeEventListener("error", onWebSocketClose)
 			webSocket.close()
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps

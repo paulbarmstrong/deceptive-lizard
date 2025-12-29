@@ -32,7 +32,7 @@ export const lobbyZod = z.strictObject({
 
 export const gameEventTypeZod = z.union([
 	z.literal("chat"), z.literal("join"), z.literal("leave"), z.literal("topic-hint"), z.literal("vote"), z.literal("round-end"),
-	z.literal("round-reset"), z.literal("category")
+	z.literal("round-reset"), z.literal("category"), z.literal("new-round-leader")
 ])
 
 export const gameEventZod = z.strictObject({

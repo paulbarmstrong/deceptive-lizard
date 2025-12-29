@@ -95,6 +95,8 @@ export function ChatPanel(props: Props) {
 									return <span>reset the round.</span>
 								} else if (gameEvent.type === "category") {
 									return <span>set the category to "{gameEvent.text}".</span>
+								} else if (gameEvent.type === "new-round-leader") {
+									return <span> became the round leader.</span>
 								}
 							})()
 						}
