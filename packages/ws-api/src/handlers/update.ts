@@ -1,9 +1,9 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { Json, Player, wsUpdateRequestDataZod, zodValidate } from "common"
+import { Json, Lobby, Player, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
-import { draftGameEvent, lobbiesTable, sendWsResponse } from "src/utilities/Misc"
+import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse } from "src/utilities/Misc"
 import { countBy } from "lodash"
 
 const bodyZod = z.strictObject({
@@ -39,13 +39,13 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			isDeceptiveLizard: false
 		}
 		lobby.players.push(newPlayer)
+		resetRound(lobby)
 
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
 			type: "join",
 			playerName: body.data.playerName
 		}))
-		
 		return newPlayer
 	})()
 
@@ -86,10 +86,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			const voteFreqs = Object.entries(countBy(lobby.players.map(x => x.votePlayerIndex)))
 				.map(pair => ({playerIndex: parseInt(pair[0]), freq: pair[1]})).sort((a,b) => b.freq - a.freq)
 			if (voteFreqs.length === 1 || voteFreqs[0].freq !== voteFreqs[1].freq) {
-				lobby.players.forEach(player => {
-					player.topicHint = undefined
-					player.votePlayerIndex = undefined
-				})
+				resetRound(lobby)
 
 				gameEvents.push(draftGameEvent(optimus, {
 					lobbyId: lobby.id,
@@ -110,4 +107,3 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 
 	return (existingPlayer === undefined) ? {connectionId: event.connectionId} : undefined
 }
-

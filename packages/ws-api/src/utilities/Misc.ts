@@ -16,6 +16,13 @@ export const gameEventsTable = new Table({
 	sortKey: "eventId"
 })
 
+export function resetRound(lobby: Lobby) {
+	lobby.players.forEach(player => {
+		player.topicHint = undefined
+		player.votePlayerIndex = undefined
+	})
+}
+
 export function draftGameEvent(optimus: OptimusDdbClient, data: {lobbyId: number, playerName: string, text?: string, type: GameEventType}) {
 	return optimus.draftItem({
 		table: gameEventsTable,

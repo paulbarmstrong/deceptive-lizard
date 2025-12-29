@@ -70,15 +70,15 @@ export function ChatPanel(props: Props) {
 								if (gameEvent.type === "chat") {
 									return <span>: {gameEvent.text}</span>
 								} else if (gameEvent.type === "join") {
-									return <span>joined</span>
+									return <span>joined, triggering a fresh round.</span>
 								} else if (gameEvent.type === "leave") {
-									return <span>left</span>
+									return <span>left, triggering a fresh round.</span>
 								} else if (gameEvent.type === "topic-hint") {
-									return <span>submitted topic hint "{gameEvent.text}"</span>
+									return <span>submitted topic hint "{gameEvent.text}".</span>
 								} else if (gameEvent.type === "vote") {
-									return <span>voted for {gameEvent.text}</span>
+									return <span>voted for {gameEvent.text}.</span>
 								} else if (gameEvent.type === "game-end") {
-									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}</span>
+									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}.</span>
 								}
 							})()
 						}
@@ -88,7 +88,7 @@ export function ChatPanel(props: Props) {
 			}
 		</div>
 		<div style={{borderColor: BACKGROUND_SHADE_T1, borderStyle: "solid", borderRadius: 4, borderTopStyle: "none", borderTopLeftRadius: 0, borderTopRightRadius: 0, display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left", height: 40}}>
-			<input value={textDraft.current} onChange={e => textDraft.current = e.target.value}
+			<input className="TextChatInput" value={textDraft.current} onChange={e => textDraft.current = e.target.value}
 				style={{paddingLeft: 10, paddingRight: 10, flexGrow: 1, color: "white", fontSize: "large", backgroundColor: BACKGROUND_SHADE_T0, borderStyle: "none"}}
 			/>
 			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined}}>send</span>
@@ -111,22 +111,3 @@ function getTimeText(timestamp: string): string {
 		return "just now"
 	}
 }
-
-/**
- * 
- * (() => {
-								if (gameEvent.type === "chat") {
-									return <span>: {gameEvent.text}</span>
-								} else if (gameEvent.type === "join") {
-									return <span>joined</span>
-								} else if (gameEvent.type === "leave") {
-									return <span>left</span>
-								} else if (gameEvent.type === "topic-hint") {
-									return <div>submitted a topic hint</div>
-								} else if (gameEvent.type === "vote") {
-									return <div>voted<div>
-								} else if (gameEvent.type === "game-end") {
-									return <div>game end<div>
-								}
-							})()
- */

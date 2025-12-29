@@ -47,7 +47,8 @@ export const wsUpdateRequestDataZod = z.strictObject({
 	topicHint: z.optional(z.string()),
 	chatMessage: z.optional(z.string()),
 	votePlayerIndex: z.optional(z.number().int().min(0)),
-	clearVotePlayerIndex: z.optional(z.boolean())
+	clearVotePlayerIndex: z.optional(z.boolean()),
+	resetGame: z.optional(z.boolean()),
 })
 
 export function zodValidate<T extends z.ZodTypeAny>(params: {

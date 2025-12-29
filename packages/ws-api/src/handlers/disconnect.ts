@@ -1,7 +1,7 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import { OptimusDdbClient } from "optimus-ddb-client"
 import { Json } from "common"
-import { draftGameEvent, lobbiesTable, sendWsResponse } from "src/utilities/Misc"
+import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse } from "src/utilities/Misc"
 import { WsApiEvent } from "src/utilities/Types"
 
 export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiGatewayManagementClient: ApiGatewayManagementApiClient)
@@ -13,6 +13,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		const player = lobby.players.find(player => player.connectionId === event.connectionId)
 		if (player !== undefined) {
 			lobby.players = lobby.players.filter(player => player.connectionId !== event.connectionId)
+			resetRound(lobby)
 
 			const leftEvent = draftGameEvent(optimus, {
 				lobbyId: lobby.id,
