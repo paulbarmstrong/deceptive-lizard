@@ -49,6 +49,7 @@ export const wsUpdateRequestDataZod = z.strictObject({
 	lobbyId: lobbyIdZod,
 	playerName: z.optional(playerNameZod),
 	category: z.optional(z.string().min(3).max(32)),
+	resetRound: z.optional(z.boolean()),
 	topicHint: z.optional(z.string()),
 	chatMessage: z.optional(z.string()),
 	votePlayerIndex: z.optional(z.number().int().min(0)),

@@ -51,12 +51,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 	})()
 
 	if (body.data.category !== undefined) {
-		if (lobby.players.indexOf(player) !== 0) {
-			throw new ClientError("You are not the first player")
-		}
-		if (lobby.category !== undefined) {
-			throw new ClientError("Category was already chosen")
-		}
+		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the lead player")
+		if (lobby.category !== undefined) throw new ClientError("Category was already chosen")
 		lobby.category = body.data.category
 		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific less-than-four-word subjects within the category "${body.data.category}".
 			If the category is something inappropriate then please don't return anything.
@@ -73,6 +69,17 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			type: "category",
 			playerName: player.name,
 			text: body.data.category
+		}))
+	}
+
+	if (body.data.resetRound !== undefined) {
+		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the lead player")
+		resetRound(lobby)
+
+		gameEvents.push(draftGameEvent(optimus, {
+			lobbyId: lobby.id,
+			type: "round-reset",
+			playerName: player.name
 		}))
 	}
 

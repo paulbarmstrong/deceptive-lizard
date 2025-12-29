@@ -32,7 +32,7 @@ export function LobbyPage(props: Props) {
 				lobby.topics !== undefined ? (
 					<div style={{display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10}}>
 						<div style={{textAlign: "left"}}>Topics:</div>
-						<TopicsPanel lobby={lobby}/>
+						<TopicsPanel lobby={lobby} player={player} sendWsUpdate={sendWsUpdate}/>
 						<div style={{textAlign: "left"}}>Player information:</div>
 						<PlayerInfoPanel lobby={lobby} player={player}/>
 					</div>

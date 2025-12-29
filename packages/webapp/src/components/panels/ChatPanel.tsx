@@ -84,11 +84,17 @@ export function ChatPanel(props: Props) {
 								} else if (gameEvent.type === "topic-hint") {
 									return <span>submitted topic hint "{gameEvent.text}".</span>
 								} else if (gameEvent.type === "vote") {
-									return <span>set their vote to {gameEvent.text}.</span>
+									if (gameEvent.text !== undefined) {
+										return <span>set their vote to {gameEvent.text}.</span>
+									} else {
+										return <span>cleared their vote.</span>
+									}
 								} else if (gameEvent.type === "round-end") {
 									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}.</span>
+								} else if (gameEvent.type === "round-reset") {
+									return <span>reset the round.</span>
 								} else if (gameEvent.type === "category") {
-									return <span>set the category to "{gameEvent.text}"</span>
+									return <span>set the category to "{gameEvent.text}".</span>
 								}
 							})()
 						}
