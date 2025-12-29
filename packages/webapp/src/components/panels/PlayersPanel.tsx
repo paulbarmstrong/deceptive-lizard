@@ -1,6 +1,7 @@
 import { Lobby, Player, WsUpdateRequestData } from "common"
 import { BACKGROUND_SHADE_T1 } from "../../utilities/Constants"
 import { s } from "../../utilities/Misc"
+import { Hovertip } from "../Hovertip"
 
 interface Props {
 	lobby: Lobby,
@@ -31,7 +32,18 @@ export function PlayersPanel(props: Props) {
 					<span style={{padding: 4}}>
 						{numVotes} vote{s(numVotes)}
 					</span>
-					<span className="material-symbols-outlined" onClick={() => changeVote(playerIndex)} style={{padding: 5, cursor: "pointer", fontVariationSettings: playerIndex === props.player?.votePlayerIndex ? "'FILL' 1" : undefined}}>thumb_up</span>
+					<span>
+						<span className="material-symbols-outlined" onClick={() => changeVote(playerIndex)} style={{padding: 5, cursor: "pointer", fontVariationSettings: playerIndex === props.player?.votePlayerIndex ? "'FILL' 1" : undefined}}>
+							thumb_up
+						</span>
+						{
+							props.player !== undefined && props.lobby.players.find(x => x.topicHint === undefined) === undefined && props.player.votePlayerIndex === undefined ? (
+								<Hovertip enabledOverride={true} inverted={true}><span style={{fontSize: "large"}}>Vote</span></Hovertip>
+							) : (
+								undefined
+							)
+						}
+					</span>
 				</div>
 			</div>
 		})}

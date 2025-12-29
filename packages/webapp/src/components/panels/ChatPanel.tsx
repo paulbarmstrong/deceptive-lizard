@@ -76,7 +76,7 @@ export function ChatPanel(props: Props) {
 								} else if (gameEvent.type === "topic-hint") {
 									return <span>submitted topic hint "{gameEvent.text}".</span>
 								} else if (gameEvent.type === "vote") {
-									return <span>voted for {gameEvent.text}.</span>
+									return <span>set their vote to {gameEvent.text}.</span>
 								} else if (gameEvent.type === "game-end") {
 									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}.</span>
 								}

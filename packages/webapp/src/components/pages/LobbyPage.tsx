@@ -8,6 +8,7 @@ import { StatusPanel } from "../panels/StatusPanel"
 import { PlayersPanel } from "../panels/PlayersPanel"
 import { PlayerInfoPanel } from "../panels/PlayerInfoPanel"
 import { Toast } from "../Toast"
+import { Hovertip } from "../Hovertip"
 
 interface Props {
 	config: DynamicWebappConfig,
