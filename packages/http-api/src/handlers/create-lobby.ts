@@ -1,4 +1,4 @@
-import { DateTime, Json, randomUrlBase64Str } from "common"
+import { DateTime, Json, stripLobbyForDeceptiveLizard } from "common"
 import { OptimusDdbClient } from "optimus-ddb-client"
 import { lobbiesTable } from "../utilities/Misc"
 import { HttpApiEvent } from "../utilities/Http"
@@ -37,5 +37,5 @@ export async function createLobby(event: HttpApiEvent, optimus: OptimusDdbClient
 		ttl: Math.floor(DateTime.now.plusHours(1).getMillis / 1000)
 	}})
 	await optimus.commitItems({items: [lobby]})
-	return {lobby}
+	return {lobby: stripLobbyForDeceptiveLizard(lobby)}
 }

@@ -13,9 +13,3 @@ export const gameEventsTable = new Table({
 	partitionKey: "lobbyId",
 	sortKey: "eventId"
 })
-
-export function stripLobby(lobby: Lobby): Lobby {
-	lobby.selectedTopicIndex = undefined
-	lobby.players.forEach(player => player.isDeceptiveLizard = undefined)
-	return lobby
-}

@@ -1,5 +1,5 @@
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
-import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, WsResponse } from "common"
+import { DateTime, GameEventType, gameEventZod, Lobby, lobbyZod, stripLobbyForDeceptiveLizard, WsResponse } from "common"
 import { OptimusDdbClient, Table } from "optimus-ddb-client"
 import { ulid } from "ulidx"
 
@@ -32,6 +32,9 @@ export async function sendWsResponse(lobby: Lobby, res: WsResponse, apiGatewayMa
 	try {
 		await Promise.all(lobby.players.map(async player => {
 			try {
+				if (res.lobby !== undefined && player.isDeceptiveLizard === true) {
+					res.lobby = stripLobbyForDeceptiveLizard(res.lobby)
+				}
 				await apiGatewayManagementClient.send(new PostToConnectionCommand({
 					ConnectionId: player.connectionId,
 					Data: JSON.stringify(res)
