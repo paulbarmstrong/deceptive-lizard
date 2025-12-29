@@ -1,4 +1,4 @@
-import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH, PLAYER_NAME_LOCAL_STORAGE_KEY, TOPIC_WIDTH } from "../../utilities/Constants"
+import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH, PLAYER_NAME_LOCAL_STORAGE_KEY } from "../../utilities/Constants"
 import { DynamicWebappConfig, Lobby } from "common"
 import { http } from "../../utilities/Http"
 import { useRefState } from "../../hooks/useRefState"
@@ -7,7 +7,6 @@ import { useError } from "../../hooks/useError"
 import { LoadingSpinner } from "../LoadingSpinner"
 import { Hovertip } from "../Hovertip"
 import { usePersistentRefState } from "../../hooks/usePersistentRefState"
-import { useEffect } from "react"
 import { PlayersPanel } from "../panels/PlayersPanel"
 
 interface Props {

@@ -16,6 +16,11 @@ export const gameEventsTable = new Table({
 	sortKey: "eventId"
 })
 
+export function updateLobbyTtl(lobby: Lobby): Lobby {
+	lobby.ttl = Math.floor(DateTime.now.plusHours(1).getMillis / 1000)
+	return lobby
+}
+
 export function resetRound(lobby: Lobby) {
 	lobby.players.forEach(player => {
 		player.topicHint = undefined

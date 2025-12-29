@@ -1,9 +1,9 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import * as z from "zod"
 import { OptimusDdbClient } from "optimus-ddb-client"
-import { Json, Lobby, Player, wsUpdateRequestDataZod, zodValidate } from "common"
+import { Json, Player, wsUpdateRequestDataZod, zodValidate } from "common"
 import { ClientError, WsApiEvent } from "src/utilities/Types"
-import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse } from "src/utilities/Misc"
+import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse, updateLobbyTtl } from "src/utilities/Misc"
 import { countBy } from "lodash"
 
 const bodyZod = z.strictObject({
@@ -98,7 +98,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		}
 	}
 
-	await optimus.commitItems({items: [lobby, ...gameEvents]})
+	await optimus.commitItems({items: [updateLobbyTtl(lobby), ...gameEvents]})
 
 	await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
 	for (const gameEvent of gameEvents) {

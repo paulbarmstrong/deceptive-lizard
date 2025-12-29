@@ -1,7 +1,7 @@
 import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi"
 import { OptimusDdbClient } from "optimus-ddb-client"
 import { Json } from "common"
-import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse } from "src/utilities/Misc"
+import { draftGameEvent, lobbiesTable, resetRound, sendWsResponse, updateLobbyTtl } from "src/utilities/Misc"
 import { WsApiEvent } from "src/utilities/Types"
 
 export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiGatewayManagementClient: ApiGatewayManagementApiClient)
@@ -21,7 +21,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 				playerName: player.name
 			})
 
-			await optimus.commitItems({items: [lobby, leftEvent]})
+			await optimus.commitItems({items: [updateLobbyTtl(lobby), leftEvent]})
 			await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
 		}
 	}
