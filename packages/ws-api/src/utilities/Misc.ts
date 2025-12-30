@@ -56,12 +56,12 @@ export async function sendWsResponse(optimus: OptimusDdbClient, lobby: Lobby, re
 	try {
 		await Promise.all(lobby.players.map(async player => {
 			try {
-				if (res.lobby !== undefined && player.isDeceptiveLizard === true) {
-					res.lobby = stripLobby(res.lobby, player)
-				}
 				await apiGatewayManagementClient.send(new PostToConnectionCommand({
 					ConnectionId: player.connectionId,
-					Data: JSON.stringify(res)
+					Data: JSON.stringify({
+						...res,
+						lobby: res.lobby !== undefined ? stripLobby(lobby, player) : undefined
+					})
 				}))
 			} catch (error) {
 				if ((error as Error).name === "GoneException") {
