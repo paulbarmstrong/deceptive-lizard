@@ -128,7 +128,7 @@ export function ChatPanel(props: Props) {
 			{
 				isChoosingCategory ? (
 					<Hovertip enabledOverride={true}>
-						<span style={{fontSize: "large"}}>Submit a category to generator topics for.</span>
+						<span style={{fontSize: "large"}}>Submit a category to generate topics for.</span>
 					</Hovertip>
 				) : (
 					undefined

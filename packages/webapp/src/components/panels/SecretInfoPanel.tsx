@@ -11,7 +11,7 @@ export function SecretInfoPanel(props: {
 		{
 			props.player?.isDeceptiveLizard !== undefined ? (
 				props.player?.isDeceptiveLizard ? (
-					<span><b>You are the deceptive lizard.</b></span>
+					<span><b>You are the deceptive lizard. You do not know the secret topic.</b></span>
 				) : (
 					<span>The secret topic is <b>{props.lobby.topics![props.lobby.selectedTopicIndex!]}</b>.</span>
 				)
