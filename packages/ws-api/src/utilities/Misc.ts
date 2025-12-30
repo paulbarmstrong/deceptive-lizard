@@ -27,7 +27,7 @@ export function resetRound(optimus: OptimusDdbClient, lobby: Lobby, gameEvents: 
 		player.votePlayerIndex = undefined
 		player.isDeceptiveLizard = undefined
 	})
-	if (rotateRoundLeader) {
+	if (rotateRoundLeader && lobby.players.length > 0) {
 		lobby.players.push(lobby.players.shift()!)
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
@@ -52,7 +52,7 @@ export function draftGameEvent(optimus: OptimusDdbClient, data: {lobbyId: number
 	})
 }
 
-export async function sendWsResponse(lobby: Lobby, res: WsResponse, apiGatewayManagementClient: ApiGatewayManagementApiClient) {
+export async function sendWsResponse(optimus: OptimusDdbClient, lobby: Lobby, res: WsResponse, apiGatewayManagementClient: ApiGatewayManagementApiClient) {
 	try {
 		await Promise.all(lobby.players.map(async player => {
 			try {
@@ -64,7 +64,13 @@ export async function sendWsResponse(lobby: Lobby, res: WsResponse, apiGatewayMa
 					Data: JSON.stringify(res)
 				}))
 			} catch (error) {
-				if ((error as Error).name !== "GoneException") throw error
+				if ((error as Error).name === "GoneException") {
+					console.log(`Removing player ${player.connectionId} due to GoneException...`)
+					lobby.players = lobby.players.filter(x => x.connectionId !== player.connectionId)
+					await optimus.commitItems({items: [lobby]})
+				} else {
+					throw error
+				}
 			}
 		}))
 	} catch (error) {

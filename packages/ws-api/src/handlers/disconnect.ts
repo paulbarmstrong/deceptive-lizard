@@ -25,7 +25,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			resetRound(optimus, lobby, gameEvents)
 
 			await optimus.commitItems({items: [updateLobbyTtl(lobby), ...gameEvents]})
-			await sendWsResponse(lobby, {lobby}, apiGatewayManagementClient)
+			await sendWsResponse(optimus, lobby, {lobby}, apiGatewayManagementClient)
 		}
 	}
 
