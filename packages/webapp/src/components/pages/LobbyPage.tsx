@@ -6,7 +6,7 @@ import { TopicsPanel } from "../panels/TopicsPanel"
 import { useError } from "../../hooks/useError"
 import { StatusPanel } from "../panels/StatusPanel"
 import { PlayersPanel } from "../panels/PlayersPanel"
-import { PlayerInfoPanel, SecretInfoPanel } from "../panels/SecretInfoPanel"
+import { SecretInfoPanel } from "../panels/SecretInfoPanel"
 import { Toast } from "../Toast"
 import { Hovertip } from "../Hovertip"
 
