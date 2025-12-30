@@ -101,7 +101,7 @@ export function ChatPanel(props: Props) {
 							})()
 						}
 					</div>
-					<div style={{padding: 4, fontSize: "medium"}}>{getTimeText(gameEvent.timestamp)}</div>
+					<div style={{padding: 4, fontSize: "medium", textAlign: "right"}}>{getTimeText(gameEvent.timestamp)}</div>
 				</div>)
 			}
 		</div>
