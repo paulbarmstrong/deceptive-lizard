@@ -112,14 +112,24 @@ export function ChatPanel(props: Props) {
 			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined}}>send</span>
 			{
 				isSubmittingTopicHint ? (
-					<Hovertip enabledOverride={true}><span style={{fontSize: "large"}}>Submit your topic hint</span></Hovertip>
+					<Hovertip enabledOverride={true}>
+						{
+							props.player?.isDeceptiveLizard ? (
+								<span style={{fontSize: "large"}}>Submit what you think looks like a hint for the secret topic.<br/>Try to make it look like you know the topic<br/>based on previous players' answers.</span>
+							) : (
+								<span style={{fontSize: "large"}}>Submit a hint for the secret topic below.<br/>It should show that you know the topic<br/>without revealing the topic to the lizard.</span>
+							)
+						}
+					</Hovertip>
 				) : (
 					undefined
 				)
 			}
 			{
 				isChoosingCategory ? (
-					<Hovertip enabledOverride={true}><span style={{fontSize: "large"}}>Submit a category</span></Hovertip>
+					<Hovertip enabledOverride={true}>
+						<span style={{fontSize: "large"}}>Submit a category to generator topics for.</span>
+					</Hovertip>
 				) : (
 					undefined
 				)

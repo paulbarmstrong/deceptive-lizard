@@ -2,7 +2,7 @@ import { Lobby, Player } from "common"
 import { BACKGROUND_SHADE_T1 } from "../../utilities/Constants"
 import { LoadingSpinner } from "../LoadingSpinner"
 
-export function PlayerInfoPanel(props: {
+export function SecretInfoPanel(props: {
 	lobby: Lobby,
 	player: Player | undefined
 }) {
