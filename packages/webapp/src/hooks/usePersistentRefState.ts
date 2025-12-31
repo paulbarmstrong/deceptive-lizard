@@ -9,17 +9,19 @@ export function usePersistentRefState<T extends Json>(params: {
 	sideEffect?: (t: T) => void
 }): MutableRefObject<T> {
 	const refState = useRefState<T>(() => {
-		const value = localStorage.getItem(params.localStorageKey)
-		if (value !== null) {
-			const t = JSON.parse(value) as T
-			if (params.wipePredicate !== undefined && params.wipePredicate(t)) {
-				return params.defaultValue
-			} else {
-				return t
-			}
-		} else {
-			return params.defaultValue
-		}
+		const storedPayload: string | null = localStorage.getItem(params.localStorageKey)
+		const parsedValue: T = (storedPayload !== null) ? (
+			JSON.parse(storedPayload) as T
+		) : (
+			params.defaultValue
+		)
+		const returnValue: T = (params.wipePredicate !== undefined && params.wipePredicate(parsedValue)) ? (
+			params.defaultValue
+		) : (
+			parsedValue
+		)
+		localStorage.setItem(params.localStorageKey, JSON.stringify(returnValue))
+		return returnValue
 	}, {
 		sideEffect: t => {
 			if (params.sideEffect !== undefined) params.sideEffect(t)
