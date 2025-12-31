@@ -4,11 +4,13 @@ import { DynamicWebappConfig, GameEvent, Lobby, Player, WsResponse, WsUpdateRequ
 import { useRefState } from "./useRefState"
 import { useNavigate } from "react-router-dom"
 import { usePersistentRefState } from "./usePersistentRefState"
-import { PLAYER_NAME_LOCAL_STORAGE_KEY } from "../utilities/Constants"
+import { PLAYER_HUE_LOCAL_STORAGE_KEY, PLAYER_NAME_LOCAL_STORAGE_KEY } from "../utilities/Constants"
 import { http } from "../utilities/Http"
+import { getRandomHue } from "../utilities/Color"
 
 export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setError: (error: Error | undefined) => void): [Lobby, Player | undefined, Array<GameEvent>, (data: WsUpdateRequestData) => void] {
 	const playerName = usePersistentRefState<string>({defaultValue: "", localStorageKey: PLAYER_NAME_LOCAL_STORAGE_KEY})
+	const playerHue = usePersistentRefState<number>({defaultValue: getRandomHue(), localStorageKey: PLAYER_HUE_LOCAL_STORAGE_KEY})
 	const webSocket = useConst<WebSocket>(() => new WebSocket(config.wsApiEndpoint))
 	const lobby = useRefState<Lobby>(originalLobby)
 	const connectionId = useRefState<string | undefined>(undefined)
@@ -35,7 +37,7 @@ export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setE
 	}
 
 	function onWebSocketOpen() {
-		sendWsUpdate({lobbyId: originalLobby.id, playerName: playerName.current})
+		sendWsUpdate({lobbyId: originalLobby.id, playerName: playerName.current, playerHue: playerHue.current})
 	}
 
 	function onWebSocketClose() {

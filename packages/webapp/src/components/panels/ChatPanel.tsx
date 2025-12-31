@@ -72,7 +72,7 @@ export function ChatPanel(props: Props) {
 			{
 				props.gameEvents.map(gameEvent => <div key={gameEvent.eventId} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 					<div style={{display: "flex", alignItems: "center", gap: gameEvent.type === "chat" ? undefined: 4}}>
-						<PlayerBadge playerName={gameEvent.playerName}/>
+						<PlayerBadge playerName={gameEvent.playerName} playerHue={gameEvent.playerHue}/>
 						{
 							(() => {
 								if (gameEvent.type === "chat") {

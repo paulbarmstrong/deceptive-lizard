@@ -6,3 +6,6 @@ export const TOPIC_HEIGHT: string = "40px"
 export const CHAT_HEIGHT: string = "150px"
 export const RED_SHADE_T0: string = "#77525a"
 export const PLAYER_NAME_LOCAL_STORAGE_KEY = "deceptivelizard.playerName"
+export const PLAYER_HUE_LOCAL_STORAGE_KEY = "deceptivelizard.playerHue"
+export const ACCENT_COLOR_SATURATION: number = 20
+export const ACCENT_COLOR_LIGHTNESS: number = 40

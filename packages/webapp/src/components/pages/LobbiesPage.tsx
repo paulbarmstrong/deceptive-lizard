@@ -1,4 +1,5 @@
-import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH, PLAYER_NAME_LOCAL_STORAGE_KEY } from "../../utilities/Constants"
+import { BACKGROUND_SHADE_T0, BACKGROUND_SHADE_T1, MENU_WIDTH, PLAYER_HUE_LOCAL_STORAGE_KEY, PLAYER_NAME_LOCAL_STORAGE_KEY
+} from "../../utilities/Constants"
 import { DynamicWebappConfig, Lobby } from "common"
 import { http } from "../../utilities/Http"
 import { useRefState } from "../../hooks/useRefState"
@@ -8,6 +9,7 @@ import { LoadingSpinner } from "../LoadingSpinner"
 import { Hovertip } from "../Hovertip"
 import { usePersistentRefState } from "../../hooks/usePersistentRefState"
 import { PlayersPanel } from "../panels/PlayersPanel"
+import { getColor, getRandomHue } from "../../utilities/Color"
 
 interface Props {
 	config: DynamicWebappConfig
@@ -15,6 +17,7 @@ interface Props {
 
 export function LobbiesPage(props: Props) {
 	const playerName = usePersistentRefState<string>({defaultValue: "", localStorageKey: PLAYER_NAME_LOCAL_STORAGE_KEY})
+	const playerHue = usePersistentRefState<number>({defaultValue: getRandomHue(), localStorageKey: PLAYER_HUE_LOCAL_STORAGE_KEY})
 	const [error, setError, withError] = useError()
 	const lobbies = useRefState<Array<Lobby> | undefined>(undefined)
 
@@ -50,6 +53,10 @@ export function LobbiesPage(props: Props) {
 						undefined
 					)
 				}
+			</div>
+			<div style={{textAlign: "left"}}>Player color:</div>
+			<div style={{display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: getColor(playerHue.current, 0), borderRadius: 4, padding: 20}}>
+				<input className="clickable slider" style={{width: "100%", boxSizing: "border-box"}} type="range" step={1} min={0} max={359} value={playerHue.current} onChange={e => playerHue.current = parseInt(e.target.value)}/>
 			</div>
 			<div style={{textAlign: "left"}}>Lobbies:</div>
 			<div style={{display: "flex", gap: 10, flexDirection: "column", justifyContent: "stretch", flexWrap: "wrap"}}>

@@ -31,12 +31,12 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 	const existingPlayer: Player | undefined = lobby.players.find(player => player.connectionId === event.connectionId)
 
 	const player: Player = existingPlayer ?? (() => {
-		if (body.data.playerName === undefined) {
-			throw new ClientError("New player must provide playerName")
-		}
+		if (body.data.playerName === undefined) throw new ClientError("New player must provide playerName")
+		if (body.data.playerHue === undefined) throw new ClientError("New player must provide playerHue")
 		const newPlayer: Player = {
 			connectionId: event.connectionId,
 			name: body.data.playerName,
+			hue: body.data.playerHue,
 			isDeceptiveLizard: false
 		}
 		lobby.players.push(newPlayer)
@@ -44,7 +44,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
 			type: "join",
-			playerName: body.data.playerName
+			playerName: body.data.playerName,
+			playerHue: body.data.playerHue
 		}))
 
 		resetRound(optimus, lobby, gameEvents)
@@ -70,6 +71,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "category",
 			playerName: player.name,
+			playerHue: player.hue,
 			text: body.data.category
 		}))
 	}
@@ -81,7 +83,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
 			type: "round-reset",
-			playerName: player.name
+			playerName: player.name,
+			playerHue: player.hue
 		}))
 	}
 
@@ -92,6 +95,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "topic-hint",
 			playerName: player.name,
+			playerHue: player.hue,
 			text: body.data.topicHint
 		}))
 	}
@@ -101,6 +105,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "chat",
 			playerName: player.name,
+			playerHue: player.hue,
 			text: body.data.chatMessage
 		}))
 	}
@@ -115,6 +120,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "vote",
 			playerName: player.name,
+			playerHue: player.hue,
 			text: body.data.votePlayerIndex !== undefined ? lobby.players[body.data.votePlayerIndex].name : undefined
 		}))
 
@@ -126,6 +132,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 					lobbyId: lobby.id,
 					type: "round-end",
 					playerName: player.name,
+					playerHue: player.hue,
 					text: lobby.players[voteFreqs[0].playerIndex].name
 				}))
 				resetRound(optimus, lobby, gameEvents)

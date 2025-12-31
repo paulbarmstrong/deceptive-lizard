@@ -2,6 +2,7 @@ import { Lobby, Player, WsUpdateRequestData } from "common"
 import { BACKGROUND_SHADE_T1 } from "../../utilities/Constants"
 import { s } from "../../utilities/Misc"
 import { Hovertip } from "../Hovertip"
+import { getColor } from "../../utilities/Color"
 
 interface Props {
 	lobby: Lobby,
@@ -25,7 +26,7 @@ export function PlayersPanel(props: Props) {
 	return <div style={{display: "flex", justifyContent: "center", gap: 10}}>
 		{props.lobby.players.map((player, playerIndex) => {
 			const numVotes = props.lobby.players.filter(voter => voter.votePlayerIndex === playerIndex).length
-			return <div key={player.connectionId} style={{display: "flex", flexDirection: "column", alignItems: "center" , padding: 10, backgroundColor: BACKGROUND_SHADE_T1, borderRadius: 4, gap: 5}}>
+			return <div key={player.connectionId} style={{display: "flex", flexDirection: "column", alignItems: "center" , padding: 10, backgroundColor: getColor(player.hue, 0), borderRadius: 4, gap: 5}}>
 				<div style={{fontWeight: "bold"}}>{player.name}</div>
 				<div>{player.topicHint !== undefined ? `"${player.topicHint}"` : "-"}</div>
 				<div style={{display: "flex", alignItems: "center", gap: 10}}>

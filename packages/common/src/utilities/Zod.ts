@@ -12,9 +12,12 @@ export const topicsArrayZod = z.array(z.string()).length(NUM_TOPICS)
 
 export const playerNameZod = z.string().min(3)
 
+export const playerHueZod = z.number().int().min(0).max(359)
+
 export const playerZod = z.strictObject({
 	connectionId: z.string(),
 	name: playerNameZod,
+	hue: playerHueZod,
 	isDeceptiveLizard: z.optional(z.boolean()),
 	topicHint: z.optional(z.string()),
 	votePlayerIndex: z.optional(z.number().int().min(0))
@@ -40,6 +43,7 @@ export const gameEventZod = z.strictObject({
 	eventId: z.string().ulid(),
 	type: gameEventTypeZod,
 	playerName: playerNameZod,
+	playerHue: playerHueZod,
 	text: z.optional(z.string()),
 	timestamp: z.string(),
 	ttl: z.number().int()
@@ -48,6 +52,7 @@ export const gameEventZod = z.strictObject({
 export const wsUpdateRequestDataZod = z.strictObject({
 	lobbyId: lobbyIdZod,
 	playerName: z.optional(playerNameZod),
+	playerHue: z.optional(playerHueZod),
 	category: z.optional(z.string().min(3).max(32)),
 	resetRound: z.optional(z.boolean()),
 	topicHint: z.optional(z.string()),

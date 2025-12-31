@@ -19,7 +19,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			gameEvents.push(draftGameEvent(optimus, {
 				lobbyId: lobby.id,
 				type: "leave",
-				playerName: player.name
+				playerName: player.name,
+				playerHue: player.hue
 			}))
 
 			resetRound(optimus, lobby, gameEvents)

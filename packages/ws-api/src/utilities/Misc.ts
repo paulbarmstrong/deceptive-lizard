@@ -32,6 +32,7 @@ export function resetRound(optimus: OptimusDdbClient, lobby: Lobby, gameEvents: 
 		gameEvents.push(draftGameEvent(optimus, {
 			lobbyId: lobby.id,
 			playerName: lobby.players[0].name,
+			playerHue: lobby.players[0].hue,
 			type: "new-round-leader"
 		}))
 	}
@@ -40,7 +41,13 @@ export function resetRound(optimus: OptimusDdbClient, lobby: Lobby, gameEvents: 
 	lobby.selectedTopicIndex = undefined
 }
 
-export function draftGameEvent(optimus: OptimusDdbClient, data: {lobbyId: number, playerName: string, text?: string, type: GameEventType}) {
+export function draftGameEvent(optimus: OptimusDdbClient, data: {
+	lobbyId: number,
+	playerName: string,
+	playerHue: number,
+	text?: string,
+	type: GameEventType
+}) {
 	return optimus.draftItem({
 		table: gameEventsTable,
 		item: {
