@@ -11,6 +11,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 	
 	for (const lobby of lobbies) {
 		const player = lobby.players.find(player => player.connectionId === event.connectionId)
+		const playerIndex = lobby.players.indexOf(player!)
 		if (player !== undefined) {
 			const gameEvents: Array<GameEvent> = []
 
@@ -20,7 +21,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 				lobbyId: lobby.id,
 				type: "leave",
 				playerName: player.name,
-				playerHue: player.hue
+				playerHue: player.hue,
+				playerIsRoundLeader: playerIndex === 0
 			}))
 
 			resetRound(optimus, lobby, gameEvents)

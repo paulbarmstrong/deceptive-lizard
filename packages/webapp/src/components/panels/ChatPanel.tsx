@@ -72,11 +72,11 @@ export function ChatPanel(props: Props) {
 			{
 				props.gameEvents.map(gameEvent => <div key={gameEvent.eventId} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 					<div style={{display: "flex", alignItems: "center", gap: gameEvent.type === "chat" ? undefined: 4}}>
-						<PlayerBadge playerName={gameEvent.playerName} playerHue={gameEvent.playerHue}/>
+						<PlayerBadge playerName={gameEvent.playerName} playerHue={gameEvent.playerHue} playerIsRoundLeader={gameEvent.playerIsRoundLeader}/>
 						{
 							(() => {
 								if (gameEvent.type === "chat") {
-									return <span>: {gameEvent.text}</span>
+									return <span style={{opacity: 0.7}}>: {gameEvent.text}</span>
 								} else if (gameEvent.type === "join") {
 									return <span>joined, triggering a fresh round.</span>
 								} else if (gameEvent.type === "leave") {
@@ -85,12 +85,12 @@ export function ChatPanel(props: Props) {
 									return <span>submitted topic hint "{gameEvent.text}".</span>
 								} else if (gameEvent.type === "vote") {
 									if (gameEvent.text !== undefined) {
-										return <span>set their vote to {gameEvent.text}.</span>
+										return <span>set their vote to <b>{gameEvent.text}</b>.</span>
 									} else {
 										return <span>cleared their vote.</span>
 									}
 								} else if (gameEvent.type === "round-end") {
-									return <span>was the deceptive lizard. The lobby voted for {gameEvent.text}.</span>
+									return <span>was the deceptive lizard. The lobby voted for <b>{gameEvent.text}</b>.</span>
 								} else if (gameEvent.type === "round-reset") {
 									return <span>reset the round.</span>
 								} else if (gameEvent.type === "category") {
@@ -109,7 +109,7 @@ export function ChatPanel(props: Props) {
 			<input className="TextChatInput" value={textDraft.current} onChange={e => textDraft.current = e.target.value}
 				style={{paddingLeft: 10, paddingRight: 10, flexGrow: 1, color: "white", fontSize: "large", backgroundColor: BACKGROUND_SHADE_T0, borderStyle: "none"}}
 			/>
-			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined}}>send</span>
+			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined, userSelect: "none"}}>send</span>
 			{
 				isSubmittingTopicHint ? (
 					<Hovertip enabledOverride={true}>

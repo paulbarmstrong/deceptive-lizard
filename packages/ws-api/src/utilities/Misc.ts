@@ -33,6 +33,7 @@ export function resetRound(optimus: OptimusDdbClient, lobby: Lobby, gameEvents: 
 			lobbyId: lobby.id,
 			playerName: lobby.players[0].name,
 			playerHue: lobby.players[0].hue,
+			playerIsRoundLeader: true,
 			type: "new-round-leader"
 		}))
 	}
@@ -45,6 +46,7 @@ export function draftGameEvent(optimus: OptimusDdbClient, data: {
 	lobbyId: number,
 	playerName: string,
 	playerHue: number,
+	playerIsRoundLeader: boolean,
 	text?: string,
 	type: GameEventType
 }) {

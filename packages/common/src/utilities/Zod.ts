@@ -44,6 +44,7 @@ export const gameEventZod = z.strictObject({
 	type: gameEventTypeZod,
 	playerName: playerNameZod,
 	playerHue: playerHueZod,
+	playerIsRoundLeader: z.boolean(),
 	text: z.optional(z.string()),
 	timestamp: z.string(),
 	ttl: z.number().int()

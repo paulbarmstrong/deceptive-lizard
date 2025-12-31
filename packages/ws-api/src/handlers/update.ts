@@ -45,13 +45,15 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "join",
 			playerName: body.data.playerName,
-			playerHue: body.data.playerHue
+			playerHue: body.data.playerHue,
+			playerIsRoundLeader: lobby.players.length === 1
 		}))
 
 		resetRound(optimus, lobby, gameEvents)
 
 		return newPlayer
 	})()
+	const playerIndex = lobby.players.indexOf(player)
 
 	if (body.data.category !== undefined) {
 		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the round leader")
@@ -72,6 +74,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			type: "category",
 			playerName: player.name,
 			playerHue: player.hue,
+			playerIsRoundLeader: playerIndex === 0,
 			text: body.data.category
 		}))
 	}
@@ -84,7 +87,8 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			lobbyId: lobby.id,
 			type: "round-reset",
 			playerName: player.name,
-			playerHue: player.hue
+			playerHue: player.hue,
+			playerIsRoundLeader: playerIndex === 0
 		}))
 	}
 
@@ -96,6 +100,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			type: "topic-hint",
 			playerName: player.name,
 			playerHue: player.hue,
+			playerIsRoundLeader: playerIndex === 0,
 			text: body.data.topicHint
 		}))
 	}
@@ -106,6 +111,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			type: "chat",
 			playerName: player.name,
 			playerHue: player.hue,
+			playerIsRoundLeader: playerIndex === 0,
 			text: body.data.chatMessage
 		}))
 	}
@@ -121,6 +127,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			type: "vote",
 			playerName: player.name,
 			playerHue: player.hue,
+			playerIsRoundLeader: playerIndex === 0,
 			text: body.data.votePlayerIndex !== undefined ? lobby.players[body.data.votePlayerIndex].name : undefined
 		}))
 
@@ -133,6 +140,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 					type: "round-end",
 					playerName: player.name,
 					playerHue: player.hue,
+					playerIsRoundLeader: playerIndex === 0,
 					text: lobby.players[voteFreqs[0].playerIndex].name
 				}))
 				resetRound(optimus, lobby, gameEvents)
