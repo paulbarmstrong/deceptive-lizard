@@ -150,10 +150,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 
 	await optimus.commitItems({items: [updateLobbyTtl(lobby), ...gameEvents]})
 
-	await sendWsResponse(optimus, lobby, {lobby}, apiGatewayManagementClient)
-	for (const gameEvent of gameEvents) {
-		await sendWsResponse(optimus, lobby, {gameEvent}, apiGatewayManagementClient)
-	}
+	await sendWsResponse(optimus, lobby, {lobby, gameEvents}, apiGatewayManagementClient)
 
 	return (existingPlayer === undefined) ? {connectionId: event.connectionId} : undefined
 }

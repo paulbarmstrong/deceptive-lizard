@@ -56,8 +56,8 @@ export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setE
 			if (res.lobby !== undefined) {
 				lobby.current = res.lobby
 			}
-			if (res.gameEvent !== undefined) {
-				gameEvents.current = [...gameEvents.current, res.gameEvent]
+			if (res.gameEvents !== undefined) {
+				gameEvents.current = [...gameEvents.current, ...res.gameEvents]
 			}
 			if (res.connectionId !== undefined) {
 				connectionId.current = res.connectionId

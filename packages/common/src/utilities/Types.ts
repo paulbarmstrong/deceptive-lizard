@@ -20,7 +20,7 @@ export type GameEvent = z.infer<typeof gameEventZod>
 export type WsUpdateRequestData = z.infer<typeof wsUpdateRequestDataZod>
 
 export type WsResponse = {
-	gameEvent?: GameEvent,
+	gameEvents?: Array<GameEvent>,
 	lobby?: Lobby,
 	connectionId?: string
 }
