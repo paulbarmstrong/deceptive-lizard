@@ -35,7 +35,7 @@ export function PlayersPanel(props: Props) {
 						{numVotes} vote{s(numVotes)}
 					</span>
 					<span>
-						<span className="material-symbols-outlined" onClick={() => changeVote(playerIndex)} style={{padding: 5, cursor: "pointer", fontVariationSettings: playerIndex === props.player?.votePlayerIndex ? "'FILL' 1" : undefined}}>
+						<span className="material-symbols-outlined" onClick={() => changeVote(playerIndex)} style={{padding: 5, cursor: "pointer", userSelect: "none", fontVariationSettings: playerIndex === props.player?.votePlayerIndex ? "'FILL' 1" : undefined}}>
 							thumb_up
 						</span>
 						{
