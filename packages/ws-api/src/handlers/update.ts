@@ -59,7 +59,7 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 		if (lobby.players.indexOf(player) !== 0) throw new ClientError("You are not the round leader")
 		if (lobby.category !== undefined) throw new ClientError("Category was already chosen")
 		lobby.category = body.data.category
-		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific subjects within the category "${body.data.category}".
+		const novaAnswer: string = await askNova(`Please think of the ${NUM_TOPICS} most well known specific items within the category "${body.data.category}".
 			If the category is something inappropriate then please don't return anything.
 			Please be sure to capitalize proper nouns.
 			Please output it as a JSON array of strings.
