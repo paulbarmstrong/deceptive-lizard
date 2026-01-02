@@ -7,6 +7,7 @@ import { usePersistentRefState } from "./usePersistentRefState"
 import { PLAYER_HUE_LOCAL_STORAGE_KEY, PLAYER_NAME_LOCAL_STORAGE_KEY } from "../utilities/Constants"
 import { http } from "../utilities/Http"
 import { getRandomHue } from "../utilities/Color"
+import { useBeforeUnloadAlert } from "./useBeforeUnloadAlert"
 
 export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setError: (error: Error | undefined) => void): [Lobby, Player | undefined, Array<GameEvent>, (data: WsUpdateRequestData) => void] {
 	const playerName = usePersistentRefState<string>({defaultValue: "", localStorageKey: PLAYER_NAME_LOCAL_STORAGE_KEY})
@@ -17,6 +18,7 @@ export function useLobby(config: DynamicWebappConfig, originalLobby: Lobby, setE
 	const gameEvents = useRefState<Array<GameEvent>>([])
 	const player = lobby.current.players.find(player => player.connectionId === connectionId.current)
 	const navigate = useNavigate()
+	useBeforeUnloadAlert(webSocket.readyState === webSocket.OPEN)
 	
 	useEffect(() => {
 		if (playerName.current.length < 3) navigate("/")
