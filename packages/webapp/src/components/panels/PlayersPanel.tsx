@@ -24,10 +24,10 @@ export function PlayersPanel(props: Props) {
 		}
 	}
 
-	return <div style={{display: "flex", justifyContent: "center", gap: 10}}>
+	return <div style={{display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10}}>
 		{props.lobby.players.map((player, playerIndex) => {
 			const numVotes = props.lobby.players.filter(voter => voter.votePlayerIndex === playerIndex).length
-			return <div key={player.connectionId} style={{display: "flex", flexDirection: "column", alignItems: "center" , padding: 10, backgroundColor: getColor(player.hue, 0), borderRadius: 4, gap: 5}}>
+			return <div key={player.connectionId} style={{display: "flex", flexDirection: "column", alignItems: "center", padding: 10, backgroundColor: getColor(player.hue, 0), borderRadius: 4, gap: 5}}>
 				<PlayerBadge playerName={player.name} playerHue={player.hue} playerIsRoundLeader={playerIndex === 0}/>
 				<div>{player.topicHint !== undefined ? `"${player.topicHint}"` : "-"}</div>
 				<div style={{display: "flex", alignItems: "center", gap: 10}}>
