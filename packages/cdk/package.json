@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"aws-cdk-lib": "^2.233.0",
-		"@paulbarmstrong/cdk-static-website-from-asset": "^0.1.10-alpha",
+		"@paulbarmstrong/cdk-static-website-from-asset": "^0.1.13-alpha",
 		"common": "*",
 		"constructs": "^10.3.0",
 		"lodash": "^4.17.21",
