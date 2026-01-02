@@ -1,1 +1,1 @@
-export const NUM_TOPICS = 20
+export const NUM_TOPICS = 12

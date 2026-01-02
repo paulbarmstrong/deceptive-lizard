@@ -1,5 +1,4 @@
 import { Lobby, Player, WsUpdateRequestData } from "common"
-import { BACKGROUND_SHADE_T1 } from "../../utilities/Constants"
 import { s } from "../../utilities/Misc"
 import { Hovertip } from "../Hovertip"
 import { getColor } from "../../utilities/Color"
