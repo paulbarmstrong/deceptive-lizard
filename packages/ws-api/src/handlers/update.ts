@@ -131,16 +131,17 @@ export default async function(event: WsApiEvent, optimus: OptimusDdbClient, apiG
 			text: body.data.votePlayerIndex !== undefined ? lobby.players[body.data.votePlayerIndex].name : undefined
 		}))
 
-		if (lobby.players.find(player => player.votePlayerIndex === undefined) === undefined) {
+		if (lobby.category !== undefined && lobby.players.find(player => player.votePlayerIndex === undefined) === undefined) {
+			const lizardPlayer: Player = lobby.players.find(player => player.isDeceptiveLizard === true)!
 			const voteFreqs = Object.entries(countBy(lobby.players.map(x => x.votePlayerIndex)))
 				.map(pair => ({playerIndex: parseInt(pair[0]), freq: pair[1]})).sort((a,b) => b.freq - a.freq)
 			if (voteFreqs.length === 1 || voteFreqs[0].freq !== voteFreqs[1].freq) {
 				gameEvents.push(draftGameEvent(optimus, {
 					lobbyId: lobby.id,
 					type: "round-end",
-					playerName: player.name,
-					playerHue: player.hue,
-					playerIsRoundLeader: playerIndex === 0,
+					playerName: lizardPlayer.name,
+					playerHue: lizardPlayer.hue,
+					playerIsRoundLeader: lobby.players.indexOf(lizardPlayer) === 0,
 					text: lobby.players[voteFreqs[0].playerIndex].name
 				}))
 				resetRound(optimus, lobby, gameEvents)
