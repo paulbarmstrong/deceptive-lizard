@@ -106,7 +106,7 @@ export function ChatPanel(props: Props) {
 			}
 		</div>
 		<div style={{borderColor: BACKGROUND_SHADE_T1, borderStyle: "solid", borderRadius: 4, borderTopStyle: "none", borderTopLeftRadius: 0, borderTopRightRadius: 0, display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left", height: 40}}>
-			<input className="TextChatInput" value={textDraft.current} onChange={e => textDraft.current = e.target.value}
+			<input className="TextChatInput" value={textDraft.current} onChange={e => textDraft.current = e.target.value} autoComplete="off"
 				style={{paddingLeft: 10, paddingRight: 10, flexGrow: 1, color: "white", fontSize: "large", backgroundColor: BACKGROUND_SHADE_T0, borderStyle: "none"}}
 			/>
 			<span className="material-symbols-outlined" onClick={onEnterChatMessage} style={{opacity: textDraft.current.length > 0 ? 1 : 0.5, padding: 5, cursor: textDraft.current.length > 0 ? "pointer" : undefined, userSelect: "none"}}>send</span>
